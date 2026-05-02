@@ -6,10 +6,6 @@ Designed for **smart apartments, condos, and gated communities** to manage resid
 
 ---
 
-## 🚀 Live Demo
-
-👉 https://your-live-demo-link.com
-
 ---
 
 ## ✨ Features
@@ -61,48 +57,5 @@ Designed for **smart apartments, condos, and gated communities** to manage resid
 - **Realtime**: Socket.io / MQTT
 - **Backend**: Node.js + Express
 - **Database**: MongoDB
-
----
-
-## 📁 Project Structure
-src/
-├── app/
-│ ├── store.js
-│ ├── queryClient.js
-│ ├── router.jsx
-│ ├── providers.jsx
-│ ├── ProtectedRoute.jsx
-│ └── RoleGuard.jsx
-│
-├── assets/
-│ ├── images/
-│ ├── icons/
-│ └── styles/
-│
-├── components/
-│ ├── ui/
-│ ├── common/
-│ ├── charts/
-│ └── cards/
-│
-├── features/
-│ ├── auth/
-│ ├── dashboard/
-│ ├── sos/
-│ ├── parking/
-│ ├── visitors/
-│ ├── notifications/
-│ ├── reports/
-│ ├── admin/
-│ ├── announcements/
-│ └── bills/
-│
-├── layouts/
-├── pages/
-├── hooks/
-├── services/
-├── utils/
-├── App.jsx
-└── main.jsx
 
 ---
