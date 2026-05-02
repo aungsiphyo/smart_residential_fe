@@ -1,18 +1,108 @@
-# React + Vite
+# 🏡 Smart Residential Management Dashboard
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern, scalable, and real-time **Residential Management System** built with **React, Zustand, React Query, and TailwindCSS**.
 
-Currently, two official plugins are available:
+Designed for **smart apartments, condos, and gated communities** to manage residents, visitors, parking, SOS alerts, and more — all in one powerful dashboard.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+---
 
-## React Compiler
+## 🚀 Live Demo
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+👉 https://your-live-demo-link.com
 
-Note: This will impact Vite dev & build performances.
+---
 
-## Expanding the ESLint configuration
+## ✨ Features
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### 📊 Dashboard
+- Real-time statistics (Residents, Visitors, Parking, Revenue)
+- Visitor traffic analytics
+- Revenue insights panel
+
+### 🔐 Authentication & Security
+- Login with OTP verification
+- Protected routes
+- Role-based access (Admin / Citizen)
+
+### 🚨 SOS Emergency System
+- One-click emergency alerts
+- Real-time notifications
+- Approval workflow
+
+### 👥 Resident & Visitor Management
+- Visitor check-in system
+- Resident management
+
+### 🚗 Parking System
+- Parking slot tracking
+- Availability monitoring
+
+### 💰 Billing & Payments
+- Bill tracking
+- Payment status monitoring
+
+### 🔔 Notifications & Announcements
+- Live updates
+- Community announcements
+
+### 📡 Real-time System
+- Socket.io / MQTT ready (IoT integration)
+
+---
+
+## 🧱 Tech Stack
+
+- **Frontend**: React (Vite)
+- **State Management**: Zustand
+- **Server State**: React Query
+- **Styling**: TailwindCSS
+- **Routing**: React Router v6.4+
+- **API**: Axios
+- **Realtime**: Socket.io / MQTT
+- **Backend**: Node.js + Express
+- **Database**: MongoDB
+
+---
+
+## 📁 Project Structure
+src/
+├── app/
+│ ├── store.js
+│ ├── queryClient.js
+│ ├── router.jsx
+│ ├── providers.jsx
+│ ├── ProtectedRoute.jsx
+│ └── RoleGuard.jsx
+│
+├── assets/
+│ ├── images/
+│ ├── icons/
+│ └── styles/
+│
+├── components/
+│ ├── ui/
+│ ├── common/
+│ ├── charts/
+│ └── cards/
+│
+├── features/
+│ ├── auth/
+│ ├── dashboard/
+│ ├── sos/
+│ ├── parking/
+│ ├── visitors/
+│ ├── notifications/
+│ ├── reports/
+│ ├── admin/
+│ ├── announcements/
+│ └── bills/
+│
+├── layouts/
+├── pages/
+├── hooks/
+├── services/
+├── utils/
+├── App.jsx
+└── main.jsx
+
+---
