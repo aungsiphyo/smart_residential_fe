@@ -4,7 +4,7 @@ import Button from "../../components/ui/Button";
 const adsData = [
   { 
     id: 1, 
-    title: "🎓 English & Mathsg Tutor", 
+    title: "🎓 English & Maths Tutor", 
     date: "June 10, 2026", 
     type: "Education", 
     status: "Active", 
