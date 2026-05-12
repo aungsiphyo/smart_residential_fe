@@ -5,6 +5,7 @@ import RoomsPage from "../features/rooms/RoomsPage";
 import UsersPage from "../features/users/UsersPage";
 import VisitorCheckInPage from "../features/visitors/VisitorCheckInPage";
 import ReportsPage from "../features/reports/ReportsPage";
+import AdvertisementsPage from "../features/reports/AdvertisementsPage";
 import NotificationsPage from "../features/notifications/NotificationsPage";
 import AnnouncementsPage from "../features/announcements/AnnouncementsPage";
 import SosPage from "../features/sos/SosPage";
@@ -24,6 +25,7 @@ export const router = createBrowserRouter([
       { path: "/users", element: <UsersPage /> },
       { path: "/visitor-checkin", element: <VisitorCheckInPage /> },
       { path: "/reports", element: <ReportsPage /> },
+      {path: "/advertisements",element: <AdvertisementsPage/>},
       { path: "/notifications", element: <NotificationsPage /> },
       { path: "/announcements", element: <AnnouncementsPage /> },
       { path: "/sos", element: <SosPage /> },

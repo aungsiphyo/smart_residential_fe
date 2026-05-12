@@ -6,6 +6,8 @@ const menu = [
   { label: "Users", icon: "👥", path: "/users" },
   { label: "Visitor Check-in", icon: "📋", path: "/visitor-checkin" },
   { label: "Reports", icon: "📄", path: "/reports" },
+    { label: "Advertisements", icon: "🏷️", path: "/advertisements" },
+
   { label: "Notifications", icon: "🔔", path: "/notifications" },
   { label: "Announcements", icon: "📢", path: "/announcements" },
   { label: "SOS Alerts", icon: "⚠️", path: "/sos" },
