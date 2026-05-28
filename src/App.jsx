@@ -1,10 +1,7 @@
-import { RouterProvider } from "react-router-dom";
-import { router } from "./app/router";
-import './App.css'
+import Dashboard from "./Dashboard";
 
 function App() {
-
-  return <RouterProvider router={router} />;
+  return <Dashboard />;
 }
 
-export default App
+export default App;
