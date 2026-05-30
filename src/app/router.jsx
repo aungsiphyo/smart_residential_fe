@@ -14,29 +14,35 @@ import HelpersPage from "../features/helpers/HelpersPage";
 import ParkingPage from "../features/parking/ParkingPage";
 import SettingsPage from "../features/settings/SettingsPage";
 import Login from "../features/auth/pages/Login";
+import OTP from "../features/auth/pages/OTP";
+import Signup from "../features/auth/pages/Signup";
+import ProtectedRoute from "./ProtectedRoute";
 
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: <DashboardLayout />,
+    element: (
+      <ProtectedRoute>
+        <DashboardLayout />
+      </ProtectedRoute>
+    ),
     children: [
       { index: true, element: <DashboardPage /> },
-      { path: "/rooms", element: <RoomsPage /> },
-      { path: "/users", element: <UsersPage /> },
-      { path: "/visitor-checkin", element: <VisitorCheckInPage /> },
-      { path: "/reports", element: <ReportsPage /> },
-      {path: "/advertisements",element: <AdvertisementsPage/>},
-      { path: "/notifications", element: <NotificationsPage /> },
-      { path: "/announcements", element: <AnnouncementsPage /> },
-      { path: "/sos", element: <SosPage /> },
-      { path: "/bills", element: <BillsPage /> },
-      { path: "/helpers", element: <HelpersPage /> },
-      { path: "/parking", element: <ParkingPage /> },
-      { path: "/settings", element: <SettingsPage /> },
+      { path: "rooms", element: <RoomsPage /> },
+      { path: "users", element: <UsersPage /> },
+      { path: "visitor-checkin", element: <VisitorCheckInPage /> },
+      { path: "reports", element: <ReportsPage /> },
+      { path: "advertisements", element: <AdvertisementsPage /> },
+      { path: "notifications", element: <NotificationsPage /> },
+      { path: "announcements", element: <AnnouncementsPage /> },
+      { path: "sos", element: <SosPage /> },
+      { path: "bills", element: <BillsPage /> },
+      { path: "helpers", element: <HelpersPage /> },
+      { path: "parking", element: <ParkingPage /> },
+      { path: "settings", element: <SettingsPage /> },
     ],
   },
-  {
-    path: "/login",
-    element: <Login />,
-  },
+  { path: "/login", element: <Login /> },
+  { path: "/signup", element: <Signup /> },
+  { path: "/otp", element: <OTP /> },
 ]);
