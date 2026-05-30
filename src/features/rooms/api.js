@@ -1,4 +1,6 @@
+import api from "../../services/axios";
+
 export const getRooms = async () => {
-  const res = await fetch("http://localhost:5000/api/rooms");
-  return res.json();
+  const response = await api.get("/rooms");
+  return response.data;
 };
