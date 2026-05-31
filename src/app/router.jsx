@@ -4,11 +4,12 @@ import DashboardPage from "../features/dashboard/DashboardPage";
 import RoomsPage from "../features/rooms/RoomsPage";
 import UsersPage from "../features/users/UsersPage";
 import VisitorCheckInPage from "../features/visitors/VisitorCheckInPage";
+import VisitorPage from "../features/visitors/VisitorPage";
 import ReportsPage from "../features/reports/ReportsPage";
 import AdvertisementsPage from "../features/reports/AdvertisementsPage";
 import NotificationsPage from "../features/notifications/NotificationsPage";
 import AnnouncementsPage from "../features/announcements/AnnouncementsPage";
-import SosPage from "../features/sos/SosPage";
+import SosAlertsPage from "../features/sos/SosAlertsPage";
 import BillsPage from "../features/bills/BillsPage";
 import HelpersPage from "../features/helpers/HelpersPage";
 import ParkingPage from "../features/parking/ParkingPage";
@@ -30,12 +31,12 @@ export const router = createBrowserRouter([
       { index: true, element: <DashboardPage /> },
       { path: "rooms", element: <RoomsPage /> },
       { path: "users", element: <UsersPage /> },
-      { path: "visitor-checkin", element: <VisitorCheckInPage /> },
+      { path: "visitor-checkin", element: <VisitorPage /> },
       { path: "reports", element: <ReportsPage /> },
       { path: "advertisements", element: <AdvertisementsPage /> },
       { path: "notifications", element: <NotificationsPage /> },
       { path: "announcements", element: <AnnouncementsPage /> },
-      { path: "sos", element: <SosPage /> },
+      { path: "sos", element: <SosAlertsPage /> },
       { path: "bills", element: <BillsPage /> },
       { path: "helpers", element: <HelpersPage /> },
       { path: "parking", element: <ParkingPage /> },
