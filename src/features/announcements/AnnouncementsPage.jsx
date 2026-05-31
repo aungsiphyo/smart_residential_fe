@@ -1,11 +1,82 @@
+import React, { useEffect, useRef, useState } from "react";
 import Button from "../../components/ui/Button";
+import { fetchAnnouncements, createAnnouncement } from "./api";
+import AnnouncementList from "./components/AnnouncementList";
+import AnnouncementForm from "./components/AnnouncementForm";
+import useAuthStore from "../auth/authStore";
+import { io } from "socket.io-client";
+
+const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || "http://localhost:5001";
 
 export default function AnnouncementsPage() {
-  const announcementsData = [
-    { id: 1, title: "Annual Owners Gala 2024", date: "Saturday, Nov 12", location: "Clubhouse", status: "Upcoming" },
-    { id: 2, title: "Elevator Upgrade Schedule", date: "Monday, May 6", description: "Phase 1: Blocks A-D", status: "Urgent" },
-    { id: 3, title: "Community Cleanup Drive", date: "Sunday, May 5", location: "Premises", status: "Upcoming" },
-  ];
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [selected, setSelected] = useState(null);
+  const [showCreate, setShowCreate] = useState(false);
+  const socketRef = useRef(null);
+  const authUser = useAuthStore((s) => s.user);
+  const persistedAuthUser = typeof window !== "undefined" ? JSON.parse(localStorage.getItem("authUser") || "null") : null;
+  const currentUser = authUser || persistedAuthUser;
+
+  const load = async () => {
+    setLoading(true);
+    try {
+      const res = await fetchAnnouncements();
+      const data = res?.data || res;
+      setItems(Array.isArray(data) ? data : data?.data || []);
+      setError("");
+    } catch (err) {
+      console.error("Failed to load announcements", err.message || err);
+      if (err.response?.status === 404) {
+        setError("Announcements endpoint not found on server (GET /announcements). Please add a GET /announcements route on the backend.");
+      } else {
+        setError(err.message || "Failed to load announcements");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => { load(); }, []);
+
+  useEffect(() => {
+    socketRef.current = io(SOCKET_URL);
+    const socket = socketRef.current;
+    socket.on("announcement", (a) => {
+      // prepend new announcements
+      setItems((prev) => [a, ...prev]);
+    });
+
+    return () => {
+      socket.off("announcement");
+      socket.disconnect();
+      socketRef.current = null;
+    };
+  }, []);
+
+  const handleCreate = async (payload) => {
+    if (!currentUser?._id && !currentUser?.id) {
+      setError("Unable to create announcement: current user is not available. Please log in again.");
+      return;
+    }
+
+    try {
+      const body = {
+        ...payload,
+        user_id: payload.user_id || currentUser._id || currentUser.id,
+      };
+
+      await createAnnouncement(body);
+      setError("");
+      // server will emit announcement; reload for consistency
+      await load();
+    } catch (err) {
+      console.error("create announcement failed", err);
+      const serverMessage = err.response?.data?.message || err.response?.data?.error || err.message || "Failed to create announcement";
+      setError(`Create announcement failed: ${serverMessage}`);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -14,32 +85,56 @@ export default function AnnouncementsPage() {
           <h1 className="text-3xl font-bold text-blue-900">Announcements</h1>
           <p className="text-gray-500 text-sm mt-1">Publish community announcements</p>
         </div>
-        <Button variant="primary">+ New Announcement</Button>
+        <div className="flex items-center gap-3">
+          <Button variant="primary" onClick={() => setShowCreate(true)}>+ New Announcement</Button>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {announcementsData.map((announcement) => (
-          <div key={announcement.id} className="bg-white rounded-lg border border-gray-200 p-4 hover:shadow-md transition">
-            <div className="flex items-start justify-between mb-3">
-              <h3 className="font-semibold text-gray-900">{announcement.title}</h3>
-              <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                announcement.status === "Urgent" 
-                  ? "bg-orange-100 text-orange-700" 
-                  : "bg-blue-100 text-blue-700"
-              }`}>
-                {announcement.status}
-              </span>
+      {loading ? (
+        <div className="p-8 text-center text-gray-500">Loading announcements...</div>
+      ) : error ? (
+        <div className="p-6 bg-red-50 border border-red-200 rounded-xl text-red-700">{error}</div>
+      ) : (
+        <AnnouncementList items={items} onView={(a) => setSelected(a)} />
+      )}
+
+      {showCreate && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+          <div className="w-full max-w-2xl rounded-[16px] bg-white p-6 shadow-2xl border border-gray-200">
+            <div className="flex justify-between items-start mb-4">
+              <div>
+                <h3 className="text-xl font-bold">New Announcement</h3>
+                <p className="text-sm text-gray-500">Publish a community announcement</p>
+              </div>
+              <button onClick={() => setShowCreate(false)} className="text-gray-500 hover:text-gray-900">✕</button>
             </div>
-            <p className="text-sm text-gray-600 mb-2">{announcement.date}</p>
-            {announcement.location && <p className="text-sm text-gray-600 mb-3">📍 {announcement.location}</p>}
-            {announcement.description && <p className="text-sm text-gray-600 mb-3">{announcement.description}</p>}
-            <div className="flex gap-2">
-              <Button variant="ghost" size="sm">Edit</Button>
-              <Button variant="ghost" size="sm">Delete</Button>
+
+            <AnnouncementForm onCancel={() => setShowCreate(false)} onSubmit={async (data) => { await handleCreate(data); setShowCreate(false); }} />
+          </div>
+        </div>
+      )}
+
+      {selected && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+          <div className="w-full max-w-2xl rounded-[16px] bg-white p-6 shadow-2xl border border-gray-200">
+            <div className="flex justify-between items-start mb-4">
+              <div>
+                <h3 className="text-xl font-bold">{selected.title}</h3>
+                <p className="text-sm text-gray-500">{selected.type} • {selected.created_at ? new Date(selected.created_at).toLocaleString() : ''}</p>
+              </div>
+              <button onClick={() => setSelected(null)} className="text-gray-500 hover:text-gray-900">✕</button>
+            </div>
+
+            <div className="prose">
+              <p>{selected.message}</p>
+            </div>
+
+            <div className="mt-4 flex justify-end">
+              <Button variant="secondary" onClick={() => setSelected(null)}>Close</Button>
             </div>
           </div>
-        ))}
-      </div>
+        </div>
+      )}
     </div>
   );
 }
