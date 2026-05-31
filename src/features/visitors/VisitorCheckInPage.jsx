@@ -14,7 +14,6 @@ export default function VisitorCheckInPage() {
           <h1 className="text-3xl font-bold text-blue-900">Visitor Check-in</h1>
           <p className="text-gray-500 text-sm mt-1">Track visitor entries and exits</p>
         </div>
-        <Button variant="primary">+ Check-in Visitor</Button>
       </div>
 
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
