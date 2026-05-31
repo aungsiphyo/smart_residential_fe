@@ -1,57 +1,105 @@
+import React, { useEffect, useRef, useState } from "react";
 import Button from "../../components/ui/Button";
+import { fetchReports, createReport, updateReport } from "./api";
+import ReportList from "./components/ReportList";
+import ReportForm from "./components/ReportForm";
+
+const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || "http://localhost:5001";
 
 export default function ReportsPage() {
-  const reportsData = [
-    { id: 1, title: "Monthly Revenue Report", date: "May 1, 2024", type: "Financial", status: "Completed" },
-    { id: 2, title: "Maintenance Issues Summary", date: "May 2, 2024", type: "Maintenance", status: "In Progress" },
-    { id: 3, title: "Occupancy Rate Report", date: "April 30, 2024", type: "Operations", status: "Completed" },
-  ];
+  const [reports, setReports] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [showCreate, setShowCreate] = useState(false);
+  const [editing, setEditing] = useState(null);
+  const socketRef = useRef(null);
+
+  const load = async () => {
+    setLoading(true);
+    try {
+      const res = await fetchReports();
+      const data = res?.data || res;
+      setReports(Array.isArray(data) ? data : data?.data || []);
+    } catch (err) {
+      console.error("Failed to load reports", err.message || err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    load();
+  }, []);
+
+  useEffect(() => {
+    socketRef.current = new WebSocket(SOCKET_URL.replace(/^http/, "ws") + "/socket.io/?EIO=4&transport=websocket");
+    const ws = socketRef.current;
+
+    ws.addEventListener("message", () => {
+      load();
+    });
+
+    return () => {
+      try { ws.close(); } catch (e) {}
+    };
+  }, []);
+
+  const handleCreate = async (payload) => {
+    try {
+      await createReport(payload);
+      setShowCreate(false);
+      load();
+    } catch (err) {
+      console.error("create report failed", err.message || err);
+    }
+  };
+
+  const handleUpdate = async (id, payload) => {
+    try {
+      await updateReport(id, payload);
+      setEditing(null);
+      load();
+    } catch (err) {
+      console.error("update failed", err.message || err);
+    }
+  };
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-blue-900">Reports</h1>
-          <p className="text-gray-500 text-sm mt-1">View and generate system reports</p>
+          <p className="text-gray-500 text-sm mt-1">View and manage resident reports</p>
         </div>
-        <Button variant="primary">+ Generate Report</Button>
+        <div className="flex items-center gap-3" />
       </div>
 
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-        <table className="w-full">
-          <thead className="bg-gray-50 border-b border-gray-200">
-            <tr>
-              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Report Title</th>
-              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Type</th>
-              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Date</th>
-              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Status</th>
-              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {reportsData.map((report) => (
-              <tr key={report.id} className="border-b border-gray-200 hover:bg-gray-50">
-                <td className="px-6 py-4 text-sm text-gray-900 font-semibold">{report.title}</td>
-                <td className="px-6 py-4 text-sm text-gray-600">{report.type}</td>
-                <td className="px-6 py-4 text-sm text-gray-600">{report.date}</td>
-                <td className="px-6 py-4 text-sm">
-                  <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                    report.status === "Completed" 
-                      ? "bg-green-100 text-green-700" 
-                      : "bg-yellow-100 text-yellow-700"
-                  }`}>
-                    {report.status}
-                  </span>
-                </td>
-                <td className="px-6 py-4 text-sm flex gap-2">
-                  <Button variant="ghost" size="sm">View</Button>
-                  <Button variant="secondary" size="sm">Download</Button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      {showCreate && (
+        <div className="bg-white rounded-2xl border p-6">
+          <ReportForm onCancel={() => setShowCreate(false)} onSubmit={handleCreate} />
+        </div>
+      )}
+
+      {loading ? (
+        <div className="p-8 text-center text-gray-500">Loading reports...</div>
+      ) : (
+        <ReportList reports={reports} onView={(r) => setEditing(r)} onUpdate={(r) => setEditing(r)} />
+      )}
+
+      {editing && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+          <div className="w-full max-w-2xl rounded-[16px] bg-white p-6 shadow-2xl border border-gray-200">
+            <div className="flex justify-between items-start mb-4">
+              <div>
+                <h3 className="text-xl font-bold">Edit Report</h3>
+                <p className="text-sm text-gray-500">Update status or details</p>
+              </div>
+              <button onClick={() => setEditing(null)} className="text-gray-500 hover:text-gray-900">✕</button>
+            </div>
+
+            <ReportForm initial={editing} onCancel={() => setEditing(null)} onSubmit={(data) => handleUpdate(editing._id, data)} />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
