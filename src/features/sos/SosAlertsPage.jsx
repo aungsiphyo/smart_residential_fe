@@ -56,9 +56,18 @@ export default function SosAlertsPage() {
       setLoading(true);
       try {
         const status = tab === "active" ? "Active" : "Resolved";
-        const data = await getSosAlerts({ status });
-        setAlerts(tab === "active" ? data : alerts);
-        setResolvedAlerts(tab === "history" ? data : resolvedAlerts);
+        const raw = await getSosAlerts({ status });
+        const data = raw?.data || raw;
+        // normalize to array
+        const arr = Array.isArray(data) ? data : Array.isArray(data?.data) ? data.data : [];
+
+        if (tab === "active") {
+          setAlerts(arr);
+        }
+
+        if (tab === "history") {
+          setResolvedAlerts(arr);
+        }
       } catch (err) {
         console.error("Failed to load SOS alerts", err.message || err);
       } finally {
@@ -69,7 +78,10 @@ export default function SosAlertsPage() {
     loadAlerts();
   }, [tab]);
 
-  const displayedAlerts = tab === "active" ? alerts : resolvedAlerts;
+  const displayedAlerts = (() => {
+    const sel = tab === "active" ? alerts : resolvedAlerts;
+    return Array.isArray(sel) ? sel : [];
+  })();
 
   const renderText = (value) => {
     if (value == null) return "";
