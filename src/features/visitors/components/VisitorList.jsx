@@ -9,6 +9,7 @@ export default function VisitorList({ visitors = [], onView }) {
           <tr>
             <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Visitor</th>
             <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Badge</th>
+            <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">RFID UID</th>
             <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Host</th>
             <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Room</th>
             <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Check-in</th>
@@ -20,6 +21,7 @@ export default function VisitorList({ visitors = [], onView }) {
             <tr key={v._id} className="border-b border-gray-200 hover:bg-gray-50">
               <td className="px-6 py-4 text-sm text-gray-900 font-semibold">{v.fullname || `${v.firstName} ${v.lastName}`.trim()}</td>
               <td className="px-6 py-4 text-sm text-gray-600">{v.badgeNumber || '—'}</td>
+              <td className="px-6 py-4 text-sm text-gray-600">{v.rfid_uid || '—'}</td>
               <td className="px-6 py-4 text-sm text-gray-600">{v.hostName || '—'}</td>
               <td className="px-6 py-4 text-sm text-gray-600">{v.target_room_id?.room_name || v.reason_for_visit || '—'}</td>
               <td className="px-6 py-4 text-sm text-gray-600">{v.check_in_time ? new Date(v.check_in_time).toLocaleString() : '-'}</td>

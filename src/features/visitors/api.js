@@ -10,6 +10,11 @@ export async function registerVisitor(payload) {
   return res.data;
 }
 
+export async function assignVisitorRfid(id, rfid_uid) {
+  const res = await API.patch(`/visitors/${id}/rfid`, { rfid_uid });
+  return res.data;
+}
+
 export async function getVisitor(id) {
   const res = await API.get(`/visitors/${id}`);
   return res.data;

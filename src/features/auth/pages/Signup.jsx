@@ -12,6 +12,7 @@ export default function Signup() {
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [roomId, setRoomId] = useState("");
+  const [rfidUid, setRfidUid] = useState("");
   const [role, setRole] = useState("Citizen");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -22,7 +23,15 @@ export default function Signup() {
     setLoading(true);
 
     try {
-      await signUp({ fullname, email, phone, password, role, room_id: roomId });
+      await signUp({
+        fullname,
+        email,
+        phone,
+        password,
+        role,
+        room_id: roomId,
+        rfid_uid: rfidUid,
+      });
       navigate("/login", { replace: true });
     } catch (err) {
       setError(
@@ -112,6 +121,19 @@ export default function Signup() {
             required
             className="w-full rounded-2xl border border-slate-200 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="Villa A-101"
+          />
+        </div>
+
+        <div>
+          <label className="mb-2 block text-sm font-medium text-slate-700">RFID card UID</label>
+          <input
+            value={rfidUid}
+            onChange={(e) =>
+              setRfidUid(e.target.value.replace(/[^a-fA-F0-9]/g, "").toUpperCase())
+            }
+            required
+            className="w-full rounded-2xl border border-slate-200 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="27095007"
           />
         </div>
 
