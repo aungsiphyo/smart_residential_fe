@@ -58,7 +58,6 @@ export default function SosAlertsPage() {
         const status = tab === "active" ? "Active" : "Resolved";
         const raw = await getSosAlerts({ status });
         const data = raw?.data || raw;
-        // normalize to array
         const arr = Array.isArray(data) ? data : Array.isArray(data?.data) ? data.data : [];
 
         if (tab === "active") {
@@ -145,13 +144,11 @@ export default function SosAlertsPage() {
         message: manualForm.message || "Manual SOS",
       };
       const created = await createSosAlert(payload);
-      // created shape may be { data } or direct
       const data = created?.data || created;
       setAlerts((prev) => [data, ...prev]);
       setManualOpen(false);
     } catch (err) {
       console.error("manual sos failed", err.message || err);
-      // optionally show UI error
     } finally {
       setManualSubmitting(false);
     }
@@ -169,63 +166,78 @@ export default function SosAlertsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-blue-900">SOS Alerts</h1>
-          <p className="text-gray-500 text-sm mt-1">Monitor emergency alerts and history.</p>
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">SOS Alerts</h1>
+          <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Monitor emergency alerts and system response history.</p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           {!soundEnabled && <Button variant="secondary" onClick={enableSound}>Enable Sound</Button>}
-          <Button onClick={() => setTab("active")} className={tab === "active" ? "bg-blue-600 text-white" : ""}>Active</Button>
-          <Button onClick={() => setTab("history")} className={tab === "history" ? "bg-blue-600 text-white" : ""}>History</Button>
+          <div className="flex items-center gap-1 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/60 p-1">
+            <button
+              type="button"
+              onClick={() => setTab("active")}
+              className={`rounded-md px-4.5 py-1.5 text-sm font-semibold transition-all cursor-pointer ${tab === "active" ? "bg-blue-700 text-slate-900 dark:text-white" : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:text-slate-200 hover:bg-slate-800/40"}`}
+            >
+              Active
+            </button>
+            <button
+              type="button"
+              onClick={() => setTab("history")}
+              className={`rounded-md px-4.5 py-1.5 text-sm font-semibold transition-all cursor-pointer ${tab === "history" ? "bg-blue-700 text-slate-900 dark:text-white" : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:text-slate-200 hover:bg-slate-800/40"}`}
+            >
+              History
+            </button>
+          </div>
           <Button variant="danger" onClick={openManual}>+ Trigger Manual Alert</Button>
         </div>
       </div>
 
-      <div className="bg-white rounded-3xl border border-gray-200 overflow-hidden p-4">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="flex items-center gap-3 bg-white rounded-2xl border border-gray-200 px-4 py-2 shadow-sm w-full max-w-md">
-            <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search room, message or resident" className="w-full bg-transparent outline-none text-sm text-gray-700" />
-          </div>
+      <div className="bg-white dark:bg-[#0e1422] rounded-lg border border-slate-200 dark:border-slate-800 overflow-hidden p-6">
+        <div className="flex items-center gap-3 mb-6">
+          <input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search room, message or resident..."
+            className="w-full sm:w-80 px-3.5 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-slate-50 dark:bg-slate-900/40 outline-none focus:ring-2 focus:ring-blue-700/20 focus:border-blue-700 text-sm font-semibold transition text-slate-800 dark:text-slate-200 placeholder-slate-500"
+          />
         </div>
 
         {loading ? (
-          <div className="p-8 text-center text-gray-500">Loading alerts...</div>
+          <div className="p-8 text-center text-slate-500 dark:text-slate-400 font-medium animate-pulse">Loading alerts...</div>
         ) : filtered.length === 0 ? (
-          <div className="p-8 text-center text-gray-400">No alerts found.</div>
+          <div className="p-8 text-center text-slate-500 dark:text-slate-400 font-medium">No alerts found.</div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left">
-              <thead className="bg-gray-50 text-xs uppercase tracking-[0.12em] text-gray-500">
+              <thead className="bg-slate-50 dark:bg-slate-900/60 text-[10px] font-bold font-mono uppercase tracking-wider text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-slate-800">
                 <tr>
-                  <th className="px-6 py-3">Room</th>
-                  <th className="px-6 py-3">Caller / Resident</th>
-                  <th className="px-6 py-3">Message</th>
-                  <th className="px-6 py-3">Status</th>
-                  <th className="px-6 py-3">Requested</th>
-                  <th className="px-6 py-3 text-right">Actions</th>
+                  <th className="px-6 py-3">ROOM</th>
+                  <th className="px-6 py-3">CALLER / RESIDENT</th>
+                  <th className="px-6 py-3">MESSAGE</th>
+                  <th className="px-6 py-3">STATUS</th>
+                  <th className="px-6 py-3">REQUESTED</th>
+                  <th className="px-6 py-3 text-right">ACTIONS</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="divide-y divide-slate-200 dark:divide-slate-800/80">
                 {filtered.map((a, i) => (
-                  <tr key={a._id || i} className="border-t border-gray-100 hover:bg-gray-50">
-                    <td className="px-6 py-4">{roomLabel(a)}</td>
-                    <td className="px-6 py-4">{residentLabel(a)}</td>
-                    <td className="px-6 py-4 text-sm text-gray-700">{a.message || a.alert || '-'}</td>
-                    <td className="px-6 py-4">
-                      <span className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${a.status === 'Resolved' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-800'}`}>
-                        {a.status || 'Pending'}
+                  <tr key={a._id || i} className="hover:bg-slate-50 dark:hover:bg-slate-900/30 transition-colors text-sm">
+                    <td className="px-6 py-4.5 text-slate-900 dark:text-white font-semibold">{roomLabel(a)}</td>
+                    <td className="px-6 py-4.5 text-slate-900 dark:text-white font-semibold">{residentLabel(a)}</td>
+                    <td className="px-6 py-4.5 font-medium text-slate-700 dark:text-slate-300">{a.message || a.alert || '-'}</td>
+                    <td className="px-6 py-4.5">
+                      <span className={`inline-flex rounded px-2 py-0.5 text-[10px] font-bold border items-center justify-center ${a.status === 'Resolved' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-red-500/10 text-red-400 border border-red-500/20 animate-pulse'}`}>
+                        {a.status || 'Active'}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-500">{a.created_at ? new Date(a.created_at).toLocaleString() : '-'}</td>
-                    <td className="px-6 py-4 text-right">
-                      <div className="flex items-center justify-end gap-2">
-                        {a.status !== 'Resolved' && (
-                          <Button size="sm" onClick={() => handleResolve(a)}>Resolve</Button>
-                        )}
-                        <Button variant="ghost" size="sm" onClick={() => openDetails(a)}>View</Button>
-                      </div>
+                    <td className="px-6 py-4.5 text-slate-500 dark:text-slate-400 font-semibold font-mono">{a.created_at ? new Date(a.created_at).toLocaleString() : '-'}</td>
+                    <td className="px-6 py-4.5 text-right flex justify-end gap-2">
+                      {a.status !== 'Resolved' && (
+                        <Button size="sm" onClick={() => handleResolve(a)}>Resolve</Button>
+                      )}
+                      <Button variant="ghost" size="sm" onClick={() => openDetails(a)}>View</Button>
                     </td>
                   </tr>
                 ))}
@@ -236,27 +248,56 @@ export default function SosAlertsPage() {
       </div>
 
       {selectedAlert && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
-          <div className="w-full max-w-2xl rounded-[16px] bg-white p-6 shadow-2xl border border-gray-200">
-            <div className="flex justify-between items-start mb-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm px-4">
+          <div className="w-full max-w-lg rounded-xl bg-white dark:bg-[#0e1422] p-6 border border-slate-200 dark:border-slate-800 shadow-lg">
+            <div className="flex justify-between items-start mb-6">
               <div>
-                <h3 className="text-xl font-bold">Alert Details</h3>
-                <p className="text-sm text-gray-500">Full details for the selected alert</p>
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white tracking-tight">Alert Details</h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Full details for the selected emergency SOS alert</p>
               </div>
-              <button onClick={closeDetails} className="text-gray-500 hover:text-gray-900">✕</button>
+              <button onClick={closeDetails} className="text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:text-slate-200 font-bold text-lg cursor-pointer">✕</button>
             </div>
 
-            <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
-              <div><strong>Type:</strong> {selectedAlert.type || selectedAlert.alert}</div>
-              <div><strong>Resident:</strong> {residentLabel(selectedAlert) || 'Unknown'}</div>
-              <div><strong>Location:</strong> {selectedAlert.location || selectedAlert.room || selectedAlert.room_id?.room_name || selectedAlert.room_id || 'Unknown'}</div>
-              <div><strong>Status:</strong> {selectedAlert.status || 'Pending'}</div>
-              <div className="md:col-span-2"><strong>Message:</strong> {selectedAlert.message || selectedAlert.alert || '-'}</div>
-              <div><strong>Created:</strong> {selectedAlert.created_at ? new Date(selectedAlert.created_at).toLocaleString() : '-'}</div>
-              {selectedAlert.resolved_at && <div><strong>Resolved:</strong> {new Date(selectedAlert.resolved_at).toLocaleString()}</div>}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-50 dark:bg-slate-900/40 p-5 rounded-lg border border-slate-200 dark:border-slate-800 font-medium text-slate-700 dark:text-slate-300">
+              <div>
+                <strong className="text-slate-500 dark:text-slate-400 uppercase text-[10px] tracking-wider block mb-1">Type</strong>
+                <span className="font-semibold text-slate-800 dark:text-slate-200">{selectedAlert.type || selectedAlert.alert || "SOS Emergency"}</span>
+              </div>
+              <div>
+                <strong className="text-slate-500 dark:text-slate-400 uppercase text-[10px] tracking-wider block mb-1">Resident</strong>
+                <span className="font-semibold text-slate-800 dark:text-slate-200">{residentLabel(selectedAlert) || 'Unknown'}</span>
+              </div>
+              <div>
+                <strong className="text-slate-500 dark:text-slate-400 uppercase text-[10px] tracking-wider block mb-1">Location</strong>
+                <span className="font-semibold text-slate-800 dark:text-slate-200">{selectedAlert.location || selectedAlert.room || selectedAlert.room_id?.room_name || selectedAlert.room_id || 'Unknown'}</span>
+              </div>
+              <div>
+                <strong className="text-slate-500 dark:text-slate-400 uppercase text-[10px] tracking-wider block mb-1">Status</strong>
+                <div>
+                  <span className={`inline-flex rounded px-2 py-0.5 text-[10px] font-bold border items-center justify-center ${selectedAlert.status === 'Resolved' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-red-500/10 text-red-400 border border-red-500/20 animate-pulse'}`}>
+                    {selectedAlert.status || 'Active'}
+                  </span>
+                </div>
+              </div>
+              <div className="sm:col-span-2">
+                <strong className="text-slate-500 dark:text-slate-400 uppercase text-[10px] tracking-wider block mb-1.5">Message</strong>
+                <div className="bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-lg p-4 text-slate-800 dark:text-slate-200 leading-relaxed font-semibold">
+                  {selectedAlert.message || selectedAlert.alert || '-'}
+                </div>
+              </div>
+              <div>
+                <strong className="text-slate-500 dark:text-slate-400 uppercase text-[10px] tracking-wider block mb-1">Created</strong>
+                <span className="font-semibold text-slate-800 dark:text-slate-200 font-mono text-xs">{selectedAlert.created_at ? new Date(selectedAlert.created_at).toLocaleString() : '-'}</span>
+              </div>
+              {selectedAlert.resolved_at && (
+                <div>
+                  <strong className="text-slate-500 dark:text-slate-400 uppercase text-[10px] tracking-wider block mb-1">Resolved</strong>
+                  <span className="font-semibold text-slate-800 dark:text-slate-200 font-mono text-xs">{new Date(selectedAlert.resolved_at).toLocaleString()}</span>
+                </div>
+              )}
             </div>
 
-            <div className="mt-4 flex justify-end gap-2">
+            <div className="mt-6 flex justify-end gap-2.5 border-t border-slate-200 dark:border-slate-800 pt-4">
               <Button variant="secondary" onClick={closeDetails}>Close</Button>
               {selectedAlert.status !== 'Resolved' && <Button onClick={() => { handleResolve(selectedAlert); closeDetails(); }}>Mark Resolved</Button>}
             </div>
@@ -265,31 +306,31 @@ export default function SosAlertsPage() {
       )}
 
       {manualOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
-          <div className="w-full max-w-lg rounded-[16px] bg-white p-6 shadow-2xl border border-gray-200">
-            <div className="flex justify-between items-start mb-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm px-4">
+          <div className="w-full max-w-lg rounded-xl bg-white dark:bg-[#0e1422] p-6 border border-slate-200 dark:border-slate-800 shadow-lg">
+            <div className="flex justify-between items-start mb-6">
               <div>
-                <h3 className="text-xl font-bold">Trigger Manual SOS</h3>
-                <p className="text-sm text-gray-500">Create a test/manual SOS alert</p>
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white tracking-tight">Trigger Manual SOS</h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Create a test or manual emergency SOS alert</p>
               </div>
-              <button onClick={() => setManualOpen(false)} className="text-gray-500 hover:text-gray-900">✕</button>
+              <button onClick={() => setManualOpen(false)} className="text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:text-slate-200 font-bold text-lg cursor-pointer">✕</button>
             </div>
 
-            <form onSubmit={submitManual} className="grid grid-cols-1 gap-4">
+            <form onSubmit={submitManual} className="space-y-4">
               <div>
-                <label className="text-sm font-medium">Room ID</label>
-                <input value={manualForm.room_id} onChange={(e) => setManualForm((s) => ({ ...s, room_id: e.target.value }))} className="w-full rounded-2xl border border-gray-200 px-4 py-3 outline-none" />
+                <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Room ID</label>
+                <input required value={manualForm.room_id} onChange={(e) => setManualForm((s) => ({ ...s, room_id: e.target.value }))} className="w-full rounded-lg border border-slate-200 dark:border-slate-800 px-3.5 py-2 outline-none focus:ring-2 focus:ring-blue-700/20 focus:border-blue-700 transition text-slate-800 dark:text-slate-200 font-semibold bg-slate-50 dark:bg-slate-900/40 focus:bg-slate-50 dark:bg-slate-900/60 placeholder-slate-500" />
               </div>
               <div>
-                <label className="text-sm font-medium">Resident ID (optional)</label>
-                <input value={manualForm.resident} onChange={(e) => setManualForm((s) => ({ ...s, resident: e.target.value }))} className="w-full rounded-2xl border border-gray-200 px-4 py-3 outline-none" />
+                <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Resident ID (optional)</label>
+                <input value={manualForm.resident} onChange={(e) => setManualForm((s) => ({ ...s, resident: e.target.value }))} className="w-full rounded-lg border border-slate-200 dark:border-slate-800 px-3.5 py-2 outline-none focus:ring-2 focus:ring-blue-700/20 focus:border-blue-700 transition text-slate-800 dark:text-slate-200 font-semibold bg-slate-50 dark:bg-slate-900/40 focus:bg-slate-50 dark:bg-slate-900/60 placeholder-slate-500" />
               </div>
               <div>
-                <label className="text-sm font-medium">Message</label>
-                <textarea value={manualForm.message} onChange={(e) => setManualForm((s) => ({ ...s, message: e.target.value }))} className="w-full rounded-2xl border border-gray-200 px-4 py-3 outline-none" />
+                <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Message</label>
+                <textarea required rows={3} value={manualForm.message} onChange={(e) => setManualForm((s) => ({ ...s, message: e.target.value }))} className="w-full rounded-lg border border-slate-200 dark:border-slate-800 px-3.5 py-2 outline-none focus:ring-2 focus:ring-blue-700/20 focus:border-blue-700 transition text-slate-800 dark:text-slate-200 font-semibold bg-slate-50 dark:bg-slate-900/40 focus:bg-slate-50 dark:bg-slate-900/60 placeholder-slate-500 min-h-[80px]" />
               </div>
 
-              <div className="flex justify-end gap-2">
+              <div className="flex justify-end gap-3 pt-4 border-t border-slate-200 dark:border-slate-800">
                 <Button variant="secondary" type="button" onClick={() => setManualOpen(false)}>Cancel</Button>
                 <Button type="submit" disabled={manualSubmitting}>{manualSubmitting ? 'Sending...' : 'Send Alert'}</Button>
               </div>

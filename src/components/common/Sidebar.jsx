@@ -1,27 +1,44 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { 
+  LayoutDashboard, 
+  Home, 
+  Users, 
+  UserCheck, 
+  FileText, 
+  Megaphone, 
+  Bell, 
+  AlertTriangle, 
+  DollarSign, 
+  Wrench, 
+  Car, 
+  Settings, 
+  LogOut 
+} from "lucide-react";
+import useAuthStore from "../../features/auth/authStore";
 
 const API_BASE_URL = "http://localhost:5001/api";
 
 const menu = [
-  { label: "Dashboard", icon: "📊", path: "/" },
-  { label: "Rooms", icon: "🏠", path: "/rooms" },
-  { label: "Users", icon: "👥", path: "/users" },
-  { label: "Visitor Check-in", icon: "📋", path: "/visitor-checkin" },
-  { label: "Reports", icon: "📄", path: "/reports" },
-  { label: "Advertisements", icon: "🏷️", path: "/advertisements" },
-  { label: "Notifications", icon: "🔔", path: "/notifications" },
-  { label: "Announcements", icon: "📢", path: "/announcements" },
-  { label: "SOS Alerts", icon: "⚠️", path: "/sos" },
-  { label: "Bill Payments", icon: "💳", path: "/bills" },
-  { label: "Helpers", icon: "🧑‍💼", path: "/helpers" },
-  { label: "Car Parking", icon: "🅿️", path: "/parking" },
+  { label: "Dashboard", icon: LayoutDashboard, path: "/" },
+  { label: "Rooms", icon: Home, path: "/rooms" },
+  { label: "Users", icon: Users, path: "/users" },
+  { label: "Visitor Check-in", icon: UserCheck, path: "/visitor-checkin" },
+  { label: "Reports", icon: FileText, path: "/reports" },
+  { label: "Advertisements", icon: Megaphone, path: "/advertisements" },
+  { label: "Notifications", icon: Bell, path: "/notifications" },
+  { label: "Announcements", icon: Megaphone, path: "/announcements" },
+  { label: "SOS Alerts", icon: AlertTriangle, path: "/sos" },
+  { label: "Bill Payments", icon: DollarSign, path: "/bills" },
+  { label: "Helpers", icon: Wrench, path: "/helpers" },
+  { label: "Car Parking", icon: Car, path: "/parking" },
 ];
 
 export default function Sidebar() {
   const location = useLocation();
   const navigate = useNavigate();
+  const user = useAuthStore(state => state.user);
 
   const [sendingSOS, setSendingSOS] = useState(false);
 
@@ -67,75 +84,88 @@ export default function Sidebar() {
     navigate("/login");
   };
 
-  return (
-    <aside className="w-64 bg-white border-r border-gray-200 hidden md:flex flex-col shadow-sm">
-      {/* Logo Section */}
-      <div className="p-5 border-b border-gray-200">
-        <h1 className="text-lg font-bold text-blue-900 flex items-center gap-2">
-          InnoCity
-          <span className="text-sm text-gray-500">Admin</span>
-        </h1>
+  const visibleMenu = menu.filter(item => {
+    if (user?.role === "Admin" || user?.role === "Staff") return true;
+    const allowedForCitizen = [
+      "/", "/visitor-checkin", "/notifications", 
+      "/announcements", "/sos", "/bills", "/parking"
+    ];
+    return allowedForCitizen.includes(item.path);
+  });
 
-        <p className="text-xs text-gray-500 mt-1">
-          Smart Residential Management
+  return (
+    <aside className="w-64 bg-theme-sidebar text-slate-700 dark:text-slate-300 hidden md:flex flex-col border-r border-theme-border transition-all duration-200">
+      {/* Logo Section */}
+      <div className="p-5 border-b border-slate-200 dark:border-slate-800">
+        <h1 className="text-md font-bold text-slate-900 dark:text-white flex items-center gap-2 tracking-tight">
+          InnoCity
+          <span className="text-[10px] font-bold tracking-wider uppercase bg-blue-500/10 text-blue-600 dark:text-blue-400 px-2 py-0.5 rounded border border-blue-500/20">
+            {user?.role || "Citizen"}
+          </span>
+        </h1>
+        <p className="text-[10px] text-slate-500 dark:text-slate-400 uppercase tracking-widest font-bold mt-1.5">
+          Residential Platform
         </p>
       </div>
 
       {/* Navigation Menu */}
-      <nav className="p-3 space-y-1 flex-1 overflow-y-auto">
-        {menu.map((item) => (
-          <button
-            key={item.label}
-            onClick={() => handleNavigation(item.path)}
-            className={`w-full px-4 py-2 rounded-lg transition flex items-center gap-3 text-left border-none cursor-pointer ${
-              isActive(item.path)
-                ? "bg-blue-50 text-blue-900 font-semibold border-l-4 border-blue-600"
-                : "text-gray-700 hover:bg-gray-50"
-            }`}
-          >
-            <span className="text-lg">{item.icon}</span>
-            <span className="text-sm">{item.label}</span>
-          </button>
-        ))}
+      <nav className="p-3.5 space-y-1 flex-1 overflow-y-auto">
+        {visibleMenu.map((item) => {
+          const Icon = item.icon;
+          const active = isActive(item.path);
+          return (
+             <button
+              key={item.label}
+              onClick={() => handleNavigation(item.path)}
+              className={`w-full px-3 py-2 rounded-lg transition-all duration-155 flex items-center gap-2.5 text-left border-none cursor-pointer group ${
+                active
+                  ? "bg-blue-600 text-white dark:bg-blue-600/20 dark:text-white dark:border-l-2 dark:border-blue-600 font-medium shadow-xs"
+                  : "text-slate-500 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-white/5 hover:text-slate-800 dark:hover:text-slate-200"
+              }`}
+            >
+              <Icon size={16} className={active ? "text-white" : "text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300 transition-colors"} />
+              <span className="text-sm tracking-tight">{item.label}</span>
+            </button>
+          );
+        })}
       </nav>
 
       {/* Emergency SOS Button */}
-      <div className="p-3 border-t border-gray-200">
+      <div className="p-3.5 border-t border-slate-200 dark:border-slate-800">
         <button
           onClick={handleEmergencySOS}
           disabled={sendingSOS}
-          className={`w-full px-4 py-3 rounded-lg text-white font-semibold transition flex items-center justify-center gap-2 ${
+          className={`w-full px-3.5 py-2.5 rounded-lg text-white font-medium transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer ${
             sendingSOS
-              ? "bg-red-400 cursor-not-allowed"
-              : "bg-red-600 hover:bg-red-700"
+              ? "bg-red-500/40 cursor-not-allowed text-white/50"
+              : "bg-red-600 hover:bg-red-700 shadow-xs"
           }`}
         >
-          <span className="text-lg">🚨</span>
-
-          <span>{sendingSOS ? "Sending Alert..." : "Emergency SOS"}</span>
+          <AlertTriangle size={16} />
+          <span className="text-sm">{sendingSOS ? "Sending SOS..." : "Emergency SOS"}</span>
         </button>
       </div>
 
-      {/* Footer */}
-      <div className="p-3 border-t border-gray-200 space-y-1">
+      {/* Footer Settings & Logout */}
+      <div className="p-3.5 border-t border-slate-200 dark:border-slate-800 space-y-0.5">
         <button
           onClick={() => handleNavigation("/settings")}
-          className={`w-full px-4 py-2 rounded-lg transition flex items-center gap-3 text-left border-none cursor-pointer ${
+          className={`w-full px-3 py-2 rounded-lg transition-all duration-155 flex items-center gap-2.5 text-left border-none cursor-pointer group ${
             isActive("/settings")
-              ? "bg-gray-100 text-gray-900 font-semibold"
-              : "text-gray-700 hover:bg-gray-50"
+              ? "bg-blue-600 text-white dark:bg-blue-600/20 dark:text-white dark:border-l-2 dark:border-blue-600 font-medium"
+              : "text-slate-500 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-white/5 hover:text-slate-800 dark:hover:text-slate-200"
           }`}
         >
-          <span className="text-lg">⚙️</span>
-          <span className="text-sm">Settings</span>
+          <Settings size={16} className={isActive("/settings") ? "text-white" : "text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300 transition-colors"} />
+          <span className="text-sm tracking-tight">Settings</span>
         </button>
 
         <button
           onClick={handleLogout}
-          className="w-full px-4 py-2 rounded-lg text-gray-700 hover:bg-gray-50 transition flex items-center gap-3 text-left border-none cursor-pointer"
+          className="w-full px-3 py-2 rounded-lg text-slate-500 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-white/5 hover:text-slate-800 dark:hover:text-slate-200 transition-all duration-150 flex items-center gap-2.5 text-left border-none cursor-pointer group"
         >
-          <span className="text-lg">🚪</span>
-          <span className="text-sm">Logout</span>
+          <LogOut size={16} className="text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300 transition-colors" />
+          <span className="text-sm tracking-tight">Logout</span>
         </button>
       </div>
     </aside>

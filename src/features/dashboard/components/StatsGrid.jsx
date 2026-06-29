@@ -1,50 +1,46 @@
-const stats = [
-  { label: "Residents", value: "1,284", icon: "👥", color: "blue", badge: "+4%" },
-  { label: "Rooms Avail.", value: "12", icon: "🏠", color: "orange" },
-  { label: "Visitors", value: "42", icon: "👤", color: "purple", badge: "LIVE" },
-  { label: "Unpaid Bills", value: "28", icon: "📷", color: "red" },
-  { label: "Helpers", value: "114", icon: "🧑", color: "green" },
-  { label: "Parking Cap.", value: "88%", icon: "P", color: "gray" },
-];
+import { Users, Home, UserCheck, DollarSign, Wrench, Car } from "lucide-react";
 
-const iconBgColors = {
-  blue: "bg-blue-100",
-  orange: "bg-orange-100",
-  purple: "bg-purple-100",
-  red: "bg-red-100",
-  green: "bg-green-100",
-  gray: "bg-gray-100",
-};
+export default function StatsGrid({ statsData }) {
+  const stats = [
+    { label: "Residents", value: statsData?.residents || 0, icon: Users, badge: "+4%" },
+    { label: "Rooms Avail.", value: statsData?.roomsAvailable || 0, icon: Home },
+    { label: "Visitors", value: statsData?.liveVisitors || 0, icon: UserCheck, badge: "LIVE" },
+    { label: "Unpaid Bills", value: statsData?.unpaidBills || 0, icon: DollarSign },
+    { label: "Helpers", value: statsData?.helpers || 0, icon: Wrench },
+    { label: "Parking Cap.", value: `${statsData?.parkingCapacity || 0}%`, icon: Car },
+  ];
 
-const badgeColors = {
-  "+4%": "bg-green-100 text-green-700",
-  "LIVE": "bg-red-100 text-red-700",
-};
+  const badgeStyles = {
+    "+4%": "bg-emerald-50 text-emerald-500 border-emerald-100",
+    "LIVE": "bg-red-50 text-red-500 border-red-100 animate-pulse",
+  };
 
-export default function StatsGrid() {
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-
-      {stats.map((s) => (
-        <div
-          key={s.label}
-          className="bg-white rounded-xl p-4 shadow-sm border border-gray-200 hover:shadow-md transition"
-        >
-          <div className="flex items-center justify-between mb-3">
-            <div className={`text-2xl ${iconBgColors[s.color]} w-10 h-10 flex items-center justify-center rounded-lg`}>
-              {s.icon}
+      {stats.map((s) => {
+        const IconComponent = s.icon;
+        return (
+          <div
+            key={s.label}
+            className="bg-white dark:bg-[#0e1422] rounded-xl p-5 border border-gray-100 dark:border-slate-800 shadow-sm flex flex-col justify-between"
+          >
+            <div className="flex items-center justify-between mb-4">
+              <div className="w-8 h-8 flex items-center justify-center rounded-md bg-gray-50 dark:bg-slate-900/40 text-gray-400 dark:text-slate-500 border border-gray-100 dark:border-slate-800">
+                <IconComponent size={16} strokeWidth={2.5} />
+              </div>
+              {s.badge && (
+                <span className={`text-[10px] font-bold px-2 py-0.5 rounded border ${badgeStyles[s.badge] || 'bg-gray-100 dark:bg-slate-800/60 text-gray-500 dark:text-slate-400 border-gray-200 dark:border-slate-700/80'}`}>
+                  {s.badge}
+                </span>
+              )}
             </div>
-            {s.badge && (
-              <span className={`text-xs font-semibold px-2 py-1 rounded ${badgeColors[s.badge] || 'bg-gray-100 text-gray-700'}`}>
-                {s.badge}
-              </span>
-            )}
+            <div>
+              <p className="text-gray-400 dark:text-slate-500 text-[10px] font-bold uppercase tracking-wider">{s.label}</p>
+              <p className="text-xl font-bold text-gray-900 dark:text-white mt-1 tracking-tight">{s.value}</p>
+            </div>
           </div>
-          <p className="text-gray-500 text-xs font-medium">{s.label}</p>
-          <p className="text-2xl font-bold text-blue-900 mt-2">{s.value}</p>
-        </div>
-      ))}
-
+        );
+      })}
     </div>
   );
 }

@@ -20,45 +20,42 @@ const announcements = [
 ];
 
 export default function AnnouncementList() {
+  const badgeStyles = {
+    Upcoming: "bg-blue-500/10 text-blue-400 border-blue-500/20",
+    Urgent: "bg-amber-500/10 text-amber-400 border-amber-500/20",
+  };
+
   return (
-    <div className="bg-white p-6 rounded-xl border border-gray-200">
+    <div className="bg-[#0e1422] p-6 rounded-xl border border-slate-800/80 hover:border-slate-700/80 transition duration-150">
 
       <div className="flex items-center justify-between mb-6">
-        <h2 className="font-semibold text-gray-900 text-lg">Community Announcements</h2>
-        <Button variant="ghost" size="md">View History →</Button>
+        <h2 className="font-bold text-white text-base tracking-tight">Community Announcements</h2>
+        <Button variant="ghost" size="sm">View History →</Button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {announcements.map((announcement) => (
           <div
             key={announcement.id}
-            className="relative rounded-lg overflow-hidden h-48 cursor-pointer group"
+            className="rounded-xl border border-slate-800 bg-slate-900/30 p-5 hover:bg-slate-900/60 transition duration-150 flex flex-col justify-between h-40 relative group cursor-pointer"
           >
-            {/* Background with gradient */}
-            <div className="absolute inset-0 bg-gradient-to-b from-gray-300 to-gray-400" />
-
-            {/* Content overlay */}
-            <div className="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition" />
-
-            {/* Badge */}
-            <div className={`absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-semibold ${announcement.badgeColor}`}>
-              {announcement.badge}
+            <div className="flex justify-between items-start">
+              <span className={`text-[10px] font-bold px-2 py-0.5 rounded border ${badgeStyles[announcement.badge] || 'bg-slate-900/60 text-slate-300 border-slate-800/50'}`}>
+                {announcement.badge}
+              </span>
+              <span className="text-2xl select-none opacity-60 group-hover:opacity-100 transition-opacity">
+                {announcement.image}
+              </span>
             </div>
 
-            {/* Text content */}
-            <div className="absolute bottom-4 left-4 right-4">
-              <p className="text-white font-bold text-lg">{announcement.title}</p>
+            <div>
+              <h3 className="font-bold text-slate-200 text-sm tracking-tight">{announcement.title}</h3>
               {announcement.date && (
-                <p className="text-white/80 text-xs mt-2">{announcement.date}</p>
+                <p className="text-slate-400 text-xs mt-1.5 font-medium">{announcement.date}</p>
               )}
               {announcement.description && (
-                <p className="text-white/80 text-xs mt-1">{announcement.description}</p>
+                <p className="text-slate-400 text-xs mt-1.5 font-medium">{announcement.description}</p>
               )}
-            </div>
-
-            {/* Icon */}
-            <div className="absolute top-4 right-4 text-3xl opacity-30">
-              {announcement.image}
             </div>
           </div>
         ))}

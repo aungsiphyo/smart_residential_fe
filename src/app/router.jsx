@@ -11,7 +11,18 @@ import NotificationsPage from "../features/notifications/NotificationsPage";
 import AnnouncementsPage from "../features/announcements/AnnouncementsPage";
 import SosAlertsPage from "../features/sos/SosAlertsPage";
 import BillsPage from "../features/bills/BillsPage";
+import UserBillsPage from "../features/bills/UserBillsPage";
+import useAuthStore from "../features/auth/authStore";
 import HelpersPage from "../features/helpers/HelpersPage";
+import RoleProtectedRoute from "./RoleProtectedRoute";
+
+const BillsRouteWrapper = () => {
+  const user = useAuthStore(state => state.user);
+  if (user?.role === "Admin" || user?.role === "Staff") {
+    return <BillsPage />;
+  }
+  return <UserBillsPage />;
+};
 import ParkingPage from "../features/parking/ParkingPage";
 import SettingsPage from "../features/settings/SettingsPage";
 import Login from "../features/auth/pages/Login";
@@ -29,16 +40,16 @@ export const router = createBrowserRouter([
     ),
     children: [
       { index: true, element: <DashboardPage /> },
-      { path: "rooms", element: <RoomsPage /> },
-      { path: "users", element: <UsersPage /> },
+      { path: "rooms", element: <RoleProtectedRoute allowedRoles={["Admin", "Staff"]}><RoomsPage /></RoleProtectedRoute> },
+      { path: "users", element: <RoleProtectedRoute allowedRoles={["Admin", "Staff"]}><UsersPage /></RoleProtectedRoute> },
       { path: "visitor-checkin", element: <VisitorPage /> },
-      { path: "reports", element: <ReportsPage /> },
-      { path: "advertisements", element: <AdvertisementsPage /> },
+      { path: "reports", element: <RoleProtectedRoute allowedRoles={["Admin", "Staff"]}><ReportsPage /></RoleProtectedRoute> },
+      { path: "advertisements", element: <RoleProtectedRoute allowedRoles={["Admin", "Staff"]}><AdvertisementsPage /></RoleProtectedRoute> },
       { path: "notifications", element: <NotificationsPage /> },
       { path: "announcements", element: <AnnouncementsPage /> },
       { path: "sos", element: <SosAlertsPage /> },
-      { path: "bills", element: <BillsPage /> },
-      { path: "helpers", element: <HelpersPage /> },
+      { path: "bills", element: <BillsRouteWrapper /> },
+      { path: "helpers", element: <RoleProtectedRoute allowedRoles={["Admin", "Staff"]}><HelpersPage /></RoleProtectedRoute> },
       { path: "parking", element: <ParkingPage /> },
       { path: "settings", element: <SettingsPage /> },
     ],

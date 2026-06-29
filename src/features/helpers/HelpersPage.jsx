@@ -12,14 +12,14 @@ import {
 import { getRooms } from "../rooms/api";
 
 const helperStatusStyle = {
-  Active: "bg-green-100 text-green-700",
-  Inactive: "bg-gray-100 text-gray-700",
+  Active: "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20",
+  Inactive: "bg-red-500/10 text-red-400 border border-red-500/20",
 };
 
 const requestStatusStyle = {
-  Pending: "bg-yellow-100 text-yellow-800",
-  "In Progress": "bg-blue-100 text-blue-800",
-  Completed: "bg-green-100 text-green-700",
+  Pending: "bg-amber-500/10 text-amber-400 border border-amber-500/20",
+  "In Progress": "bg-blue-500/15 text-blue-400 border border-blue-500/20",
+  Completed: "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20",
 };
 
 const initialHelperForm = {
@@ -126,11 +126,12 @@ export default function HelpersPage() {
     });
   }, [helpers, search, statusFilter]);
 
-  const itemsPerPage = 8;
+  const itemsPerPage = 6;
   const pageCount = Math.max(1, Math.ceil(filteredHelpers.length / itemsPerPage));
   const currentPageSafe = Math.min(currentPage, pageCount);
   const startIndex = (currentPageSafe - 1) * itemsPerPage;
   const paginatedHelpers = filteredHelpers.slice(startIndex, startIndex + itemsPerPage);
+  const endIndex = startIndex + paginatedHelpers.length;
 
   useEffect(() => {
     setCurrentPage(1);
@@ -149,11 +150,12 @@ export default function HelpersPage() {
     });
   }, [helperRequests, requestSearch, requestStatusFilter, rooms]);
 
-  const requestItemsPerPage = 8;
+  const requestItemsPerPage = 6;
   const requestPageCount = Math.max(1, Math.ceil(filteredRequests.length / requestItemsPerPage));
   const requestPageSafe = Math.min(requestPage, requestPageCount);
   const requestStartIndex = (requestPageSafe - 1) * requestItemsPerPage;
   const paginatedRequests = filteredRequests.slice(requestStartIndex, requestStartIndex + requestItemsPerPage);
+  const requestEndIndex = requestStartIndex + paginatedRequests.length;
 
   useEffect(() => {
     setRequestPage(1);
@@ -286,24 +288,24 @@ export default function HelpersPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-blue-900">Helpers Management</h1>
-          <p className="text-gray-500 text-sm mt-1">Manage helper staff records and credential data.</p>
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Helpers Management</h1>
+          <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Manage helper staff records and resident service requests.</p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3 rounded-2xl border border-gray-200 bg-white px-4 py-3 shadow-sm">
+        <div className="flex items-center gap-1 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/60 p-1 self-start sm:self-auto">
           <button
             type="button"
             onClick={() => setActiveTab("helpers")}
-            className={`rounded-2xl px-4 py-2 text-sm font-semibold ${activeTab === "helpers" ? "bg-blue-600 text-white" : "text-slate-600 hover:bg-slate-100"}`}
+            className={`rounded-md px-4.5 py-1.5 text-sm font-semibold transition-all cursor-pointer ${activeTab === "helpers" ? "bg-blue-700 text-slate-900 dark:text-white" : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:text-slate-200 hover:bg-slate-800/40"}`}
           >
             Helpers
           </button>
           <button
             type="button"
             onClick={() => setActiveTab("requests")}
-            className={`rounded-2xl px-4 py-2 text-sm font-semibold ${activeTab === "requests" ? "bg-blue-600 text-white" : "text-slate-600 hover:bg-slate-100"}`}
+            className={`rounded-md px-4.5 py-1.5 text-sm font-semibold transition-all cursor-pointer ${activeTab === "requests" ? "bg-blue-700 text-slate-900 dark:text-white" : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:text-slate-200 hover:bg-slate-800/40"}`}
           >
             Requests
           </button>
@@ -313,18 +315,16 @@ export default function HelpersPage() {
       {activeTab === "helpers" ? (
         <>
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-            <div className="flex items-center gap-3 bg-white rounded-2xl border border-gray-200 px-4 py-2 shadow-sm">
-              <input
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search name, phone, address or NRIC"
-                className="w-full min-w-[220px] bg-transparent outline-none text-sm text-gray-700"
-              />
-            </div>
+            <input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search name, phone, NRIC..."
+              className="w-full sm:w-80 px-3.5 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-slate-50 dark:bg-slate-900/40 outline-none focus:ring-2 focus:ring-blue-700/20 focus:border-blue-700 text-sm font-semibold transition text-slate-800 dark:text-slate-200 placeholder-slate-500"
+            />
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="rounded-2xl border border-gray-200 bg-white px-4 py-2 text-sm text-gray-700 outline-none shadow-sm"
+              className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0e1422] px-3.5 py-2 text-sm text-slate-800 dark:text-slate-200 font-semibold outline-none cursor-pointer hover:border-slate-700 transition-colors"
             >
               <option value="All">All Status</option>
               <option value="Active">Active</option>
@@ -334,82 +334,82 @@ export default function HelpersPage() {
           </div>
 
           {helperError && (
-            <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-              {helperError}
+            <div className="rounded-lg border border-red-500/20 bg-red-500/10 px-4 py-3.5 text-sm font-semibold text-red-400">
+              ⚠️ {helperError}
             </div>
           )}
 
-          <div className="bg-white rounded-3xl border border-gray-200 overflow-hidden shadow-sm">
+          <div className="bg-white dark:bg-[#0e1422] rounded-lg border border-slate-200 dark:border-slate-800 overflow-hidden mt-6">
             <table className="w-full text-left">
-              <thead className="bg-gray-50 text-xs uppercase tracking-[0.15em] text-gray-500">
+              <thead className="bg-slate-50 dark:bg-slate-900/60 text-[10px] font-bold font-mono uppercase tracking-wider text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-slate-800">
                 <tr>
-                  <th className="px-6 py-4">Helper</th>
-                  <th className="px-6 py-4">Contact</th>
-                  <th className="px-6 py-4">Experience</th>
-                  <th className="px-6 py-4">NRIC</th>
-                  <th className="px-6 py-4">Status</th>
-                  <th className="px-6 py-4 text-right">Actions</th>
+                  <th className="px-6 py-3">HELPER</th>
+                  <th className="px-6 py-3">CONTACT</th>
+                  <th className="px-6 py-3">EXPERIENCE</th>
+                  <th className="px-6 py-3">NRIC</th>
+                  <th className="px-6 py-3">STATUS</th>
+                  <th className="px-6 py-3 text-right">ACTIONS</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="divide-y divide-slate-200 dark:divide-slate-800/80">
                 {helperLoading ? (
                   <tr>
-                    <td colSpan={6} className="px-6 py-16 text-center text-gray-500">
+                    <td colSpan={6} className="px-6 py-16 text-center text-slate-500 dark:text-slate-400 font-medium">
                       Loading helpers...
                     </td>
                   </tr>
                 ) : paginatedHelpers.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="px-6 py-16 text-center text-gray-500">
+                    <td colSpan={6} className="px-6 py-16 text-center text-slate-500 dark:text-slate-400 font-medium">
                       No helpers found.
                     </td>
                   </tr>
                 ) : (
                   paginatedHelpers.map((helper) => (
-                    <tr key={helper._id} className="border-t border-gray-100 hover:bg-gray-50 transition-colors">
-                      <td className="px-6 py-4">
+                    <tr key={helper._id} className="hover:bg-slate-50 dark:hover:bg-slate-900/30 transition-colors text-sm">
+                      <td className="px-6 py-4.5">
                         <div className="flex items-center gap-4">
                           <img
                             src={helper.nric_photo_url || "https://via.placeholder.com/64?text=Photo"}
                             alt={helper.fullname}
-                            className="h-14 w-14 rounded-2xl object-cover border border-gray-200"
+                            className="h-12 w-12 rounded-lg object-cover border border-slate-200 dark:border-slate-800"
                           />
                           <div>
-                            <p className="font-semibold text-slate-900">{helper.fullname}</p>
-                            <p className="text-sm text-gray-500">{helper.address}</p>
+                            <p className="font-semibold text-slate-900 dark:text-white">{helper.fullname}</p>
+                            <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5">{helper.address}</p>
                           </div>
                         </div>
                       </td>
-                      <td className="px-6 py-4">
-                        <p className="font-semibold text-slate-900">{helper.phone}</p>
-                        <p className="text-sm text-gray-500">{helper.gender}, {helper.age || "—"} yrs</p>
+                      <td className="px-6 py-4.5">
+                        <p className="font-semibold text-slate-800 dark:text-slate-200">{helper.phone}</p>
+                        <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5">{helper.gender}, {helper.age || "—"} yrs</p>
                       </td>
-                      <td className="px-6 py-4">
-                        <p className="font-semibold text-slate-900">{helper.experience ?? 0} yrs</p>
+                      <td className="px-6 py-4.5">
+                        <p className="font-semibold text-slate-800 dark:text-slate-200 font-mono">{helper.experience ?? 0} yrs</p>
                       </td>
-                      <td className="px-6 py-4 text-sm text-gray-500">{helper.nric_number || "—"}</td>
-                      <td className="px-6 py-4">
-                        <span className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${helperStatusStyle[helper.status] || "bg-gray-100 text-gray-700"}`}>
+                      <td className="px-6 py-4.5 text-sm text-slate-700 dark:text-slate-300 font-semibold font-mono">{helper.nric_number || "—"}</td>
+                      <td className="px-6 py-4.5">
+                        <span className={`inline-flex rounded px-2 py-0.5 text-[10px] font-bold border items-center justify-center ${helperStatusStyle[helper.status] || "bg-slate-900 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-800"}`}>
                           {helper.status || "Active"}
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-right">
+                      <td className="px-6 py-4.5 text-right">
                         <details className="relative inline-block text-left">
-                          <summary className="list-none cursor-pointer text-xl text-slate-400 hover:text-slate-700 px-2 py-1 select-none outline-none">
+                          <summary className="list-none cursor-pointer text-xl text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white px-2 py-1 select-none outline-none">
                             ⋮
                           </summary>
-                          <div className="absolute right-0 mt-1 w-32 bg-white border border-slate-200 rounded-2xl shadow-xl z-20 py-1">
+                          <div className="absolute right-0 mt-1 w-32 bg-white dark:bg-[#0e1422] border border-slate-200 dark:border-slate-800 rounded-lg shadow-md z-20 py-1 origin-top-right">
                             <button
                               type="button"
                               onClick={() => openEditHelper(helper)}
-                              className="block w-full text-left px-4 py-2 text-sm text-slate-700 hover:bg-slate-50"
+                              className="block w-full text-left px-4 py-2.5 text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-800"
                             >
                               Edit
                             </button>
                             <button
                               type="button"
                               onClick={() => handleDeleteHelper(helper._id)}
-                              className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 border-t border-slate-100"
+                              className="block w-full text-left px-4 py-2.5 text-sm font-semibold text-red-400 hover:bg-red-500/10 border-t border-slate-200 dark:border-slate-800"
                             >
                               Delete
                             </button>
@@ -422,39 +422,35 @@ export default function HelpersPage() {
               </tbody>
             </table>
 
-            <div className="flex flex-col gap-3 justify-between border-t border-gray-100 bg-slate-50 px-6 py-4 sm:flex-row sm:items-center">
-              <p className="text-sm text-gray-600">
-                Showing {paginatedHelpers.length > 0 ? startIndex + 1 : 0} to {startIndex + paginatedHelpers.length} of {filteredHelpers.length} helpers
+            <div className="flex flex-col gap-3 justify-between border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/40 px-6 py-4 sm:flex-row sm:items-center text-slate-500 dark:text-slate-400 text-sm">
+              <p>
+                Showing <span className="font-semibold text-slate-800 dark:text-slate-200">{paginatedHelpers.length > 0 ? startIndex + 1 : 0}</span> to <span className="font-semibold text-slate-800 dark:text-slate-200">{endIndex}</span> of <span className="font-semibold text-slate-800 dark:text-slate-200">{filteredHelpers.length}</span> helpers
               </p>
               <div className="flex items-center gap-2">
-                <Button
-                  variant="secondary"
-                  size="sm"
+                <button
+                  className="p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white hover:bg-slate-800 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                   onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                   disabled={currentPageSafe === 1}
-                  className={currentPageSafe === 1 ? "opacity-50 cursor-not-allowed" : ""}
                 >
-                  Prev
-                </Button>
+                  {"<"}
+                </button>
                 {Array.from({ length: pageCount }, (_, index) => (
                   <button
                     key={index}
                     type="button"
                     onClick={() => setCurrentPage(index + 1)}
-                    className={`w-9 h-9 rounded-xl text-sm font-semibold ${currentPageSafe === index + 1 ? "bg-blue-600 text-white" : "text-slate-600 bg-white border border-gray-200 hover:bg-gray-100"}`}
+                    className={`w-8 h-8 flex items-center justify-center rounded-lg text-sm font-semibold cursor-pointer transition-all ${currentPageSafe === index + 1 ? "bg-blue-700 text-slate-900 dark:text-white" : "text-slate-700 dark:text-slate-300 bg-white dark:bg-[#0e1422] border border-slate-200 dark:border-slate-800 hover:bg-slate-800"}`}
                   >
                     {index + 1}
                   </button>
                 ))}
-                <Button
-                  variant="secondary"
-                  size="sm"
+                <button
+                  className="p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white hover:bg-slate-800 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                   onClick={() => setCurrentPage((prev) => Math.min(prev + 1, pageCount))}
                   disabled={currentPageSafe === pageCount}
-                  className={currentPageSafe === pageCount ? "opacity-50 cursor-not-allowed" : ""}
                 >
-                  Next
-                </Button>
+                  {">"}
+                </button>
               </div>
             </div>
           </div>
@@ -462,18 +458,16 @@ export default function HelpersPage() {
       ) : (
         <>
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-            <div className="flex items-center gap-3 bg-white rounded-2xl border border-gray-200 px-4 py-2 shadow-sm">
-              <input
-                value={requestSearch}
-                onChange={(e) => setRequestSearch(e.target.value)}
-                placeholder="Search type, room or preference"
-                className="w-full min-w-[220px] bg-transparent outline-none text-sm text-gray-700"
-              />
-            </div>
+            <input
+              value={requestSearch}
+              onChange={(e) => setRequestSearch(e.target.value)}
+              placeholder="Search type, room, preference..."
+              className="w-full sm:w-80 px-3.5 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-slate-50 dark:bg-slate-900/40 outline-none focus:ring-2 focus:ring-blue-700/20 focus:border-blue-700 text-sm font-semibold transition text-slate-800 dark:text-slate-200 placeholder-slate-500"
+            />
             <select
               value={requestStatusFilter}
               onChange={(e) => setRequestStatusFilter(e.target.value)}
-              className="rounded-2xl border border-gray-200 bg-white px-4 py-2 text-sm text-gray-700 outline-none shadow-sm"
+              className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0e1422] px-3.5 py-2 text-sm text-slate-800 dark:text-slate-200 font-semibold outline-none cursor-pointer hover:border-slate-700 transition-colors"
             >
               <option value="All">All Status</option>
               <option value="Pending">Pending</option>
@@ -484,33 +478,33 @@ export default function HelpersPage() {
           </div>
 
           {requestError && (
-            <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-              {requestError}
+            <div className="rounded-lg border border-red-500/20 bg-red-500/10 px-4 py-3.5 text-sm font-semibold text-red-400">
+              ⚠️ {requestError}
             </div>
           )}
 
-          <div className="bg-white rounded-3xl border border-gray-200 overflow-hidden shadow-sm">
+          <div className="bg-white dark:bg-[#0e1422] rounded-lg border border-slate-200 dark:border-slate-800 overflow-hidden mt-6">
             <table className="w-full text-left">
-              <thead className="bg-gray-50 text-xs uppercase tracking-[0.15em] text-gray-500">
+              <thead className="bg-slate-50 dark:bg-slate-900/60 text-[10px] font-bold font-mono uppercase tracking-wider text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-slate-800">
                 <tr>
-                  <th className="px-6 py-4">Room</th>
-                  <th className="px-6 py-4">Type</th>
-                  <th className="px-6 py-4">Preferred</th>
-                  <th className="px-6 py-4">Status</th>
-                  <th className="px-6 py-4">Requested</th>
-                  <th className="px-6 py-4 text-right">Actions</th>
+                  <th className="px-6 py-3">ROOM</th>
+                  <th className="px-6 py-3">TYPE</th>
+                  <th className="px-6 py-3">PREFERRED</th>
+                  <th className="px-6 py-3">STATUS</th>
+                  <th className="px-6 py-3">REQUESTED</th>
+                  <th className="px-6 py-3 text-right">ACTIONS</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="divide-y divide-slate-200 dark:divide-slate-800/80">
                 {requestLoading ? (
                   <tr>
-                    <td colSpan={6} className="px-6 py-16 text-center text-gray-500">
+                    <td colSpan={6} className="px-6 py-16 text-center text-slate-500 dark:text-slate-400 font-medium">
                       Loading requests...
                     </td>
                   </tr>
                 ) : paginatedRequests.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="px-6 py-16 text-center text-gray-500">
+                    <td colSpan={6} className="px-6 py-16 text-center text-slate-500 dark:text-slate-400 font-medium">
                       No helper requests found.
                     </td>
                   </tr>
@@ -518,28 +512,27 @@ export default function HelpersPage() {
                   paginatedRequests.map((request) => {
                     const roomLabel = rooms.find((room) => room._id === request.room_id)?.room_number || rooms.find((room) => room._id === request.room_id)?.name || request.room_id;
                     return (
-                      <tr key={request._id} className="border-t border-gray-100 hover:bg-gray-50 transition-colors">
-                        <td className="px-6 py-4">
-                          <p className="font-semibold text-slate-900">{roomLabel}</p>
+                      <tr key={request._id} className="hover:bg-slate-50 dark:hover:bg-slate-900/30 transition-colors text-sm">
+                        <td className="px-6 py-4.5">
+                          <p className="font-semibold text-slate-900 dark:text-white">{roomLabel}</p>
                         </td>
-                        <td className="px-6 py-4">
-                          <p className="font-semibold text-slate-900">{request.type}</p>
+                        <td className="px-6 py-4.5">
+                          <p className="font-semibold text-slate-800 dark:text-slate-200">{request.type}</p>
                         </td>
-                        <td className="px-6 py-4 text-sm text-gray-500">{request.gender_preferred}</td>
-                        <td className="px-6 py-4">
-                          <span className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${requestStatusStyle[request.status] || "bg-gray-100 text-gray-700"}`}>
+                        <td className="px-6 py-4.5 text-sm text-slate-700 dark:text-slate-300 font-semibold">{request.gender_preferred}</td>
+                        <td className="px-6 py-4.5">
+                          <span className={`inline-flex rounded px-2 py-0.5 text-[10px] font-bold border items-center justify-center ${requestStatusStyle[request.status] || "bg-slate-900 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-800"}`}>
                             {request.status}
                           </span>
                         </td>
-                        <td className="px-6 py-4 text-sm text-gray-500">{formatDate(request.created_at)}</td>
-                        <td className="px-6 py-4 text-right">
-                          <button
-                            type="button"
+                        <td className="px-6 py-4.5 text-sm text-slate-500 dark:text-slate-400 font-medium font-mono">{formatDate(request.created_at)}</td>
+                        <td className="px-6 py-4.5 text-sm text-right">
+                          <Button
+                            size="sm"
                             onClick={() => openEditRequest(request)}
-                            className="rounded-2xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
                           >
                             Edit
-                          </button>
+                          </Button>
                         </td>
                       </tr>
                     );
@@ -548,39 +541,35 @@ export default function HelpersPage() {
               </tbody>
             </table>
 
-            <div className="flex flex-col gap-3 justify-between border-t border-gray-100 bg-slate-50 px-6 py-4 sm:flex-row sm:items-center">
-              <p className="text-sm text-gray-600">
-                Showing {paginatedRequests.length > 0 ? requestStartIndex + 1 : 0} to {requestStartIndex + paginatedRequests.length} of {filteredRequests.length} requests
+            <div className="flex flex-col gap-3 justify-between border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/40 px-6 py-4 sm:flex-row sm:items-center text-slate-500 dark:text-slate-400 text-sm">
+              <p>
+                Showing <span className="font-semibold text-slate-800 dark:text-slate-200">{paginatedRequests.length > 0 ? requestStartIndex + 1 : 0}</span> to <span className="font-semibold text-slate-800 dark:text-slate-200">{requestEndIndex}</span> of <span className="font-semibold text-slate-800 dark:text-slate-200">{filteredRequests.length}</span> requests
               </p>
               <div className="flex items-center gap-2">
-                <Button
-                  variant="secondary"
-                  size="sm"
+                <button
+                  className="p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white hover:bg-slate-800 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                   onClick={() => setRequestPage((prev) => Math.max(prev - 1, 1))}
                   disabled={requestPageSafe === 1}
-                  className={requestPageSafe === 1 ? "opacity-50 cursor-not-allowed" : ""}
                 >
-                  Prev
-                </Button>
+                  {"<"}
+                </button>
                 {Array.from({ length: requestPageCount }, (_, index) => (
                   <button
                     key={index}
                     type="button"
                     onClick={() => setRequestPage(index + 1)}
-                    className={`w-9 h-9 rounded-xl text-sm font-semibold ${requestPageSafe === index + 1 ? "bg-blue-600 text-white" : "text-slate-600 bg-white border border-gray-200 hover:bg-gray-100"}`}
+                    className={`w-8 h-8 flex items-center justify-center rounded-lg text-sm font-semibold cursor-pointer transition-all ${requestPageSafe === index + 1 ? "bg-blue-700 text-slate-900 dark:text-white" : "text-slate-700 dark:text-slate-300 bg-white dark:bg-[#0e1422] border border-slate-200 dark:border-slate-800 hover:bg-slate-800"}`}
                   >
                     {index + 1}
                   </button>
                 ))}
-                <Button
-                  variant="secondary"
-                  size="sm"
+                <button
+                  className="p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white hover:bg-slate-800 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                   onClick={() => setRequestPage((prev) => Math.min(prev + 1, requestPageCount))}
                   disabled={requestPageSafe === requestPageCount}
-                  className={requestPageSafe === requestPageCount ? "opacity-50 cursor-not-allowed" : ""}
                 >
-                  Next
-                </Button>
+                  {">"}
+                </button>
               </div>
             </div>
           </div>
@@ -588,116 +577,116 @@ export default function HelpersPage() {
       )}
 
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
-          <div className="w-full max-w-2xl rounded-[24px] bg-white p-6 shadow-2xl border border-gray-200">
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm px-4">
+          <div className="w-full max-w-lg rounded-xl bg-white dark:bg-[#0e1422] p-6 border border-slate-200 dark:border-slate-800 shadow-lg">
+            <div className="flex items-center justify-between mb-6">
               <div>
-                <h2 className="text-2xl font-bold text-slate-900">{editingHelper ? "Edit Helper" : "Add Helper"}</h2>
-                <p className="text-sm text-gray-500">Use real helper profile data from the database.</p>
+                <h2 className="text-lg font-bold text-slate-900 dark:text-white tracking-tight">{editingHelper ? "Edit Helper" : "Add Helper"}</h2>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Use real helper profile data from the database.</p>
               </div>
-              <button type="button" onClick={closeModal} className="text-gray-500 hover:text-gray-900">✕</button>
+              <button type="button" onClick={closeModal} className="text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:text-slate-200 font-bold text-lg cursor-pointer">✕</button>
             </div>
 
-            <form onSubmit={handleSaveHelper} className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-700">Full Name</label>
+            <form onSubmit={handleSaveHelper} className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div className="space-y-1.5">
+                <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Full Name</label>
                 <input
                   required
                   value={helperForm.fullname}
                   onChange={(e) => setHelperForm({ ...helperForm, fullname: e.target.value })}
-                  className="w-full rounded-2xl border border-gray-200 px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full rounded-lg border border-slate-200 dark:border-slate-800 px-3.5 py-2 outline-none focus:ring-2 focus:ring-blue-700/20 focus:border-blue-700 transition text-slate-800 dark:text-slate-200 font-semibold bg-slate-50 dark:bg-slate-900/40 focus:bg-slate-50 dark:bg-slate-900/60 placeholder-slate-500"
                 />
               </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-700">Phone</label>
+              <div className="space-y-1.5">
+                <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Phone</label>
                 <input
                   required
                   value={helperForm.phone}
                   onChange={(e) => setHelperForm({ ...helperForm, phone: e.target.value })}
-                  className="w-full rounded-2xl border border-gray-200 px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full rounded-lg border border-slate-200 dark:border-slate-800 px-3.5 py-2 outline-none focus:ring-2 focus:ring-blue-700/20 focus:border-blue-700 transition text-slate-800 dark:text-slate-200 font-semibold bg-slate-50 dark:bg-slate-900/40 focus:bg-slate-50 dark:bg-slate-900/60 placeholder-slate-500"
                 />
               </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-700">Address</label>
+              <div className="space-y-1.5 sm:col-span-2">
+                <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Address</label>
                 <input
                   required
                   value={helperForm.address}
                   onChange={(e) => setHelperForm({ ...helperForm, address: e.target.value })}
-                  className="w-full rounded-2xl border border-gray-200 px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full rounded-lg border border-slate-200 dark:border-slate-800 px-3.5 py-2 outline-none focus:ring-2 focus:ring-blue-700/20 focus:border-blue-700 transition text-slate-800 dark:text-slate-200 font-semibold bg-slate-50 dark:bg-slate-900/40 focus:bg-slate-50 dark:bg-slate-900/60 placeholder-slate-500"
                 />
               </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-700">Gender</label>
+              <div className="space-y-1.5">
+                <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Gender</label>
                 <select
                   value={helperForm.gender}
                   onChange={(e) => setHelperForm({ ...helperForm, gender: e.target.value })}
-                  className="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0e1422] px-3.5 py-2 outline-none focus:ring-2 focus:ring-blue-700/20 focus:border-blue-700 transition text-slate-800 dark:text-slate-200 font-semibold cursor-pointer"
                 >
                   <option value="Male">Male</option>
                   <option value="Female">Female</option>
                 </select>
               </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-700">Age</label>
+              <div className="space-y-1.5">
+                <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Age</label>
                 <input
                   type="number"
                   min={18}
                   value={helperForm.age}
                   onChange={(e) => setHelperForm({ ...helperForm, age: e.target.value })}
-                  className="w-full rounded-2xl border border-gray-200 px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full rounded-lg border border-slate-200 dark:border-slate-800 px-3.5 py-2 outline-none focus:ring-2 focus:ring-blue-700/20 focus:border-blue-700 transition text-slate-800 dark:text-slate-200 font-semibold bg-slate-50 dark:bg-slate-900/40 focus:bg-slate-50 dark:bg-slate-900/60 placeholder-slate-500"
                 />
               </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-700">Experience (Years)</label>
+              <div className="space-y-1.5">
+                <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Experience (Years)</label>
                 <input
                   type="number"
                   min={0}
                   value={helperForm.experience}
                   onChange={(e) => setHelperForm({ ...helperForm, experience: e.target.value })}
-                  className="w-full rounded-2xl border border-gray-200 px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full rounded-lg border border-slate-200 dark:border-slate-800 px-3.5 py-2 outline-none focus:ring-2 focus:ring-blue-700/20 focus:border-blue-700 transition text-slate-800 dark:text-slate-200 font-semibold bg-slate-50 dark:bg-slate-900/40 focus:bg-slate-50 dark:bg-slate-900/60 placeholder-slate-500"
                 />
               </div>
-              <div className="space-y-2 md:col-span-2">
-                <label className="text-sm font-medium text-slate-700">NRIC Number</label>
-                <input
-                  required
-                  value={helperForm.nric_number}
-                  onChange={(e) => setHelperForm({ ...helperForm, nric_number: e.target.value })}
-                  className="w-full rounded-2xl border border-gray-200 px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-              <div className="space-y-2 md:col-span-2">
-                <label className="text-sm font-medium text-slate-700">NRIC Image URL</label>
-                <input
-                  value={helperForm.nric_photo_url}
-                  onChange={(e) => setHelperForm({ ...helperForm, nric_photo_url: e.target.value })}
-                  className="w-full rounded-2xl border border-gray-200 px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-              <div className="space-y-2 md:col-span-2">
-                <label className="text-sm font-medium text-slate-700">Status</label>
+              <div className="space-y-1.5">
+                <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Status</label>
                 <select
                   value={helperForm.status}
                   onChange={(e) => setHelperForm({ ...helperForm, status: e.target.value })}
-                  className="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0e1422] px-3.5 py-2 outline-none focus:ring-2 focus:ring-blue-700/20 focus:border-blue-700 transition text-slate-800 dark:text-slate-200 font-semibold cursor-pointer"
                 >
                   <option value="Active">Active</option>
                   <option value="Inactive">Inactive</option>
                 </select>
               </div>
+              <div className="space-y-1.5 sm:col-span-2">
+                <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">NRIC Number</label>
+                <input
+                  required
+                  value={helperForm.nric_number}
+                  onChange={(e) => setHelperForm({ ...helperForm, nric_number: e.target.value })}
+                  className="w-full rounded-lg border border-slate-200 dark:border-slate-800 px-3.5 py-2 outline-none focus:ring-2 focus:ring-blue-700/20 focus:border-blue-700 transition text-slate-800 dark:text-slate-200 font-semibold bg-slate-50 dark:bg-slate-900/40 focus:bg-slate-50 dark:bg-slate-900/60 placeholder-slate-500"
+                />
+              </div>
+              <div className="space-y-1.5 sm:col-span-2">
+                <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">NRIC Image URL</label>
+                <input
+                  value={helperForm.nric_photo_url}
+                  onChange={(e) => setHelperForm({ ...helperForm, nric_photo_url: e.target.value })}
+                  className="w-full rounded-lg border border-slate-200 dark:border-slate-800 px-3.5 py-2 outline-none focus:ring-2 focus:ring-blue-700/20 focus:border-blue-700 transition text-slate-800 dark:text-slate-200 font-semibold bg-slate-50 dark:bg-slate-900/40 focus:bg-slate-50 dark:bg-slate-900/60 placeholder-slate-500"
+                />
+              </div>
 
               {helperError && (
-                <div className="md:col-span-2 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-                  {helperError}
+                <div className="sm:col-span-2 rounded-lg border border-red-500/20 bg-red-500/10 px-4 py-3.5 text-sm font-semibold text-red-400">
+                  ⚠️ {helperError}
                 </div>
               )}
 
-              <div className="md:col-span-2 flex flex-col gap-3 sm:flex-row sm:justify-end">
+              <div className="sm:col-span-2 flex justify-end gap-3 pt-4 border-t border-slate-200 dark:border-slate-800">
                 <Button type="button" variant="secondary" onClick={closeModal}>
                   Cancel
                 </Button>
                 <Button type="submit" disabled={submitting}>
-                  {submitting ? "Saving..." : editingHelper ? "Update Helper" : "Create Helper"}
+                  {submitting ? "Saving..." : editingHelper ? "Update" : "Create"}
                 </Button>
               </div>
             </form>
@@ -706,64 +695,66 @@ export default function HelpersPage() {
       )}
 
       {isRequestModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
-          <div className="w-full max-w-2xl rounded-[24px] bg-white p-6 shadow-2xl border border-gray-200">
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm px-4">
+          <div className="w-full max-w-lg rounded-xl bg-white dark:bg-[#0e1422] p-6 border border-slate-200 dark:border-slate-800 shadow-lg">
+            <div className="flex items-center justify-between mb-6">
               <div>
-                <h2 className="text-2xl font-bold text-slate-900">{editingRequest ? "Edit Request" : "Add Request"}</h2>
-                <p className="text-sm text-gray-500">Create or update a helper service request.</p>
+                <h2 className="text-lg font-bold text-slate-900 dark:text-white tracking-tight">{editingRequest ? "Edit Request" : "Add Request"}</h2>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Create or update a helper service request.</p>
               </div>
-              <button type="button" onClick={closeRequestModal} className="text-gray-500 hover:text-gray-900">✕</button>
+              <button type="button" onClick={closeRequestModal} className="text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:text-slate-200 font-bold text-lg cursor-pointer">✕</button>
             </div>
 
-            <form onSubmit={handleSaveRequest} className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              <div className="space-y-2 md:col-span-2">
-                <label className="text-sm font-medium text-slate-700">Room</label>
+            <form onSubmit={handleSaveRequest} className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Room</label>
                 <select
                   required
                   value={requestForm.room_id}
                   onChange={(e) => setRequestForm({ ...requestForm, room_id: e.target.value })}
-                  className="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0e1422] px-3.5 py-2 outline-none focus:ring-2 focus:ring-blue-700/20 focus:border-blue-700 transition text-slate-800 dark:text-slate-200 font-semibold cursor-pointer"
                 >
                   <option value="">Select room</option>
                   {rooms.map((room) => (
                     <option key={room._id} value={room._id}>
-                      {room.room_number || room.name || room._id}
+                      {room.room_number || room.name || room.room_name || room._id}
                     </option>
                   ))}
                 </select>
               </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-700">Request Type</label>
-                <select
-                  required
-                  value={requestForm.type}
-                  onChange={(e) => setRequestForm({ ...requestForm, type: e.target.value })}
-                  className="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="Cleaning">Cleaning</option>
-                  <option value="Maintenance">Maintenance</option>
-                  <option value="Other">Other</option>
-                </select>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Request Type</label>
+                  <select
+                    required
+                    value={requestForm.type}
+                    onChange={(e) => setRequestForm({ ...requestForm, type: e.target.value })}
+                    className="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0e1422] px-3.5 py-2 outline-none focus:ring-2 focus:ring-blue-700/20 focus:border-blue-700 transition text-slate-800 dark:text-slate-200 font-semibold cursor-pointer"
+                  >
+                    <option value="Cleaning">Cleaning</option>
+                    <option value="Maintenance">Maintenance</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Gender Preference</label>
+                  <select
+                    value={requestForm.gender_preferred}
+                    onChange={(e) => setRequestForm({ ...requestForm, gender_preferred: e.target.value })}
+                    className="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0e1422] px-3.5 py-2 outline-none focus:ring-2 focus:ring-blue-700/20 focus:border-blue-700 transition text-slate-800 dark:text-slate-200 font-semibold cursor-pointer"
+                  >
+                    <option value="No Preference">No Preference</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                  </select>
+                </div>
               </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-700">Gender Preference</label>
-                <select
-                  value={requestForm.gender_preferred}
-                  onChange={(e) => setRequestForm({ ...requestForm, gender_preferred: e.target.value })}
-                  className="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="No Preference">No Preference</option>
-                  <option value="Male">Male</option>
-                  <option value="Female">Female</option>
-                </select>
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-700">Status</label>
+              <div>
+                <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Status</label>
                 <select
                   value={requestForm.status}
                   onChange={(e) => setRequestForm({ ...requestForm, status: e.target.value })}
-                  className="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0e1422] px-3.5 py-2 outline-none focus:ring-2 focus:ring-blue-700/20 focus:border-blue-700 transition text-slate-800 dark:text-slate-200 font-semibold cursor-pointer"
                 >
                   <option value="Pending">Pending</option>
                   <option value="In Progress">In Progress</option>
@@ -772,12 +763,12 @@ export default function HelpersPage() {
               </div>
 
               {requestError && (
-                <div className="md:col-span-2 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-                  {requestError}
+                <div className="rounded-lg border border-red-500/20 bg-red-500/10 px-4 py-3.5 text-sm font-semibold text-red-400">
+                  ⚠️ {requestError}
                 </div>
               )}
 
-              <div className="md:col-span-2 flex flex-col gap-3 sm:flex-row sm:justify-end">
+              <div className="flex justify-end gap-3 pt-4 border-t border-slate-200 dark:border-slate-800">
                 <Button type="button" variant="secondary" onClick={closeRequestModal}>
                   Cancel
                 </Button>

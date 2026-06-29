@@ -164,61 +164,49 @@ export default function ReportsPage() {
 
   const statusBadgeClass = (status) => {
     if (status === "Resolved" || status === "Completed" || status === "Paid") {
-      return "bg-green-100 text-green-700";
+      return "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
     }
 
     if (status === "In Progress" || status === "Pending") {
-      return "bg-yellow-100 text-yellow-700";
+      return "bg-amber-500/10 text-amber-400 border border-amber-500/20";
     }
 
-    return "bg-red-100 text-red-700";
+    return "bg-red-500/10 text-red-400 border border-red-500/20";
   };
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-blue-900">Reports</h1>
-        <p className="text-gray-500 text-sm mt-1">
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Reports</h1>
+        <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">
           View revenue reports and user submitted reports
         </p>
       </div>
 
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <h2 className="text-xl font-bold text-blue-900">Revenue Reports</h2>
-          <p className="text-sm text-gray-500">
+      <div className="bg-white dark:bg-[#0e1422] rounded-lg border border-slate-200 dark:border-slate-800 overflow-hidden">
+        <div className="px-6 py-5 border-b border-slate-200 dark:border-slate-800">
+          <h2 className="text-base font-bold text-slate-900 dark:text-white tracking-tight">Revenue Reports</h2>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
             Daily, monthly and yearly user payment revenue
           </p>
         </div>
 
-        <table className="w-full">
-          <thead className="bg-gray-50 border-b border-gray-200">
+        <table className="w-full text-left">
+          <thead className="bg-slate-50 dark:bg-slate-900/60 border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 text-[10px] font-mono uppercase tracking-wider">
             <tr>
-              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">
-                Report Title
-              </th>
-              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">
-                Type
-              </th>
-              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">
-                Revenue
-              </th>
-              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">
-                Payments
-              </th>
-              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">
-                Status
-              </th>
-              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">
-                Actions
-              </th>
+              <th className="px-6 py-3 font-semibold">REPORT TITLE</th>
+              <th className="px-6 py-3 font-semibold">TYPE</th>
+              <th className="px-6 py-3 font-semibold">REVENUE</th>
+              <th className="px-6 py-3 font-semibold">PAYMENTS</th>
+              <th className="px-6 py-3 font-semibold">STATUS</th>
+              <th className="px-6 py-3 font-semibold text-right">ACTIONS</th>
             </tr>
           </thead>
 
-          <tbody>
+          <tbody className="divide-y divide-slate-200 dark:divide-slate-800/80">
             {loading ? (
               <tr>
-                <td colSpan="6" className="px-6 py-6 text-center text-gray-500">
+                <td colSpan="6" className="px-6 py-12 text-center text-slate-500 dark:text-slate-400 font-medium">
                   Loading reports...
                 </td>
               </tr>
@@ -226,39 +214,39 @@ export default function ReportsPage() {
               revenueReports.map((report) => (
                 <tr
                   key={report.id}
-                  className="border-b border-gray-200 hover:bg-gray-50"
+                  className="hover:bg-slate-50 dark:hover:bg-slate-900/30 transition-colors text-sm"
                 >
-                  <td className="px-6 py-4 text-sm text-gray-900 font-semibold">
+                  <td className="px-6 py-4 text-slate-900 dark:text-white font-semibold">
                     {report.title}
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-600">
+                  <td className="px-6 py-4 text-slate-700 dark:text-slate-300 font-medium">
                     {report.type}
                   </td>
-                  <td className="px-6 py-4 text-sm font-semibold text-blue-900">
+                  <td className="px-6 py-4 font-semibold text-slate-900 dark:text-white font-mono">
                     {report.totalRevenue.toLocaleString()} MMK
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-600">
+                  <td className="px-6 py-4 text-slate-700 dark:text-slate-300 font-medium font-mono">
                     {report.totalPayments}
                   </td>
-                  <td className="px-6 py-4 text-sm">
+                  <td className="px-6 py-4">
                     <span
-                      className={`px-3 py-1 rounded-full text-xs font-semibold ${statusBadgeClass(
+                      className={`inline-flex px-2 py-0.5 rounded text-[10px] font-medium border items-center justify-center ${statusBadgeClass(
                         report.status,
                       )}`}
                     >
                       {report.status}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-sm flex gap-2">
+                  <td className="px-6 py-4 text-right flex justify-end gap-2">
                     <Button
-                      variant="ghost"
+                      variant="secondary"
                       size="sm"
                       onClick={() => setSelectedReport(report)}
                     >
                       Details
                     </Button>
                     <Button
-                      variant="secondary"
+                      variant="primary"
                       size="sm"
                       onClick={() => downloadRevenuePDF(report)}
                     >
@@ -272,50 +260,38 @@ export default function ReportsPage() {
         </table>
       </div>
 
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <h2 className="text-xl font-bold text-blue-900">
+      <div className="bg-white dark:bg-[#0e1422] rounded-lg border border-slate-200 dark:border-slate-800 overflow-hidden">
+        <div className="px-6 py-5 border-b border-slate-200 dark:border-slate-800">
+          <h2 className="text-base font-bold text-slate-900 dark:text-white tracking-tight border-none">
             User Submitted Reports
           </h2>
-          <p className="text-sm text-gray-500">
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
             Reports submitted by users will appear here
           </p>
         </div>
 
-        <table className="w-full">
-          <thead className="bg-gray-50 border-b border-gray-200">
+        <table className="w-full text-left">
+          <thead className="bg-slate-50 dark:bg-slate-900/60 border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 text-[10px] font-mono uppercase tracking-wider">
             <tr>
-              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">
-                Title
-              </th>
-              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">
-                Type
-              </th>
-              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">
-                Location
-              </th>
-              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">
-                Status
-              </th>
-              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">
-                Date
-              </th>
-              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">
-                Actions
-              </th>
+              <th className="px-6 py-3 font-semibold">TITLE</th>
+              <th className="px-6 py-3 font-semibold">TYPE</th>
+              <th className="px-6 py-3 font-semibold">LOCATION</th>
+              <th className="px-6 py-3 font-semibold">STATUS</th>
+              <th className="px-6 py-3 font-semibold">DATE</th>
+              <th className="px-6 py-3 font-semibold text-right">ACTIONS</th>
             </tr>
           </thead>
 
-          <tbody>
+          <tbody className="divide-y divide-slate-200 dark:divide-slate-800/80">
             {loading ? (
               <tr>
-                <td colSpan="6" className="px-6 py-6 text-center text-gray-500">
+                <td colSpan="6" className="px-6 py-12 text-center text-slate-500 dark:text-slate-400 font-medium">
                   Loading user reports...
                 </td>
               </tr>
             ) : userReports.length === 0 ? (
               <tr>
-                <td colSpan="6" className="px-6 py-6 text-center text-gray-500">
+                <td colSpan="6" className="px-6 py-12 text-center text-slate-500 dark:text-slate-400 font-medium">
                   No user reports found
                 </td>
               </tr>
@@ -323,36 +299,36 @@ export default function ReportsPage() {
               userReports.map((report) => (
                 <tr
                   key={report._id}
-                  className="border-b border-gray-200 hover:bg-gray-50"
+                  className="hover:bg-slate-50 dark:hover:bg-slate-900/30 transition-colors text-sm"
                 >
-                  <td className="px-6 py-4 text-sm text-gray-900 font-semibold">
+                  <td className="px-6 py-4 text-slate-900 dark:text-white font-semibold">
                     {report.title || "Untitled Report"}
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-600">
+                  <td className="px-6 py-4 text-slate-700 dark:text-slate-300 font-medium">
                     {report.type || "General"}
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-600">
-                    {report.location || "N/A"}
+                  <td className="px-6 py-4 text-slate-700 dark:text-slate-300 font-medium font-mono">
+                    {report.location || "—"}
                   </td>
-                  <td className="px-6 py-4 text-sm">
+                  <td className="px-6 py-4">
                     <span
-                      className={`px-3 py-1 rounded-full text-xs font-semibold ${statusBadgeClass(
+                      className={`inline-flex px-2 py-0.5 rounded text-[10px] font-medium border items-center justify-center ${statusBadgeClass(
                         report.status || "Pending",
                       )}`}
                     >
                       {report.status || "Pending"}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-600">
+                  <td className="px-6 py-4 text-slate-700 dark:text-slate-300 font-medium font-mono">
                     {report.created_at
                       ? new Date(report.created_at).toLocaleDateString()
                       : report.createdAt
                         ? new Date(report.createdAt).toLocaleDateString()
-                        : "N/A"}
+                        : "—"}
                   </td>
-                  <td className="px-6 py-4 text-sm flex gap-2">
+                  <td className="px-6 py-4 text-right flex justify-end gap-2">
                     <Button
-                      variant="ghost"
+                      variant="secondary"
                       size="sm"
                       onClick={() =>
                         setSelectedReport({
@@ -364,7 +340,7 @@ export default function ReportsPage() {
                       Details
                     </Button>
                     <Button
-                      variant="secondary"
+                      variant="primary"
                       size="sm"
                       onClick={() => downloadUserReportPDF(report)}
                     >
@@ -379,85 +355,87 @@ export default function ReportsPage() {
       </div>
 
       {selectedReport && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl w-full max-w-3xl p-6 shadow-xl">
-            <div className="flex justify-between items-start mb-4">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 px-4">
+          <div className="bg-white dark:bg-[#0e1422] rounded-xl w-full max-w-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-lg">
+            <div className="flex justify-between items-start mb-6">
               <div>
-                <h2 className="text-2xl font-bold text-blue-900">
+                <h2 className="text-lg font-bold text-slate-900 dark:text-white tracking-tight">
                   {selectedReport.title || "Report Details"}
                 </h2>
-                <p className="text-sm text-gray-500">
+                <p className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mt-1.5 font-mono">
                   {selectedReport.type || "General Report"}
                 </p>
               </div>
 
               <button
                 onClick={() => setSelectedReport(null)}
-                className="text-gray-500 hover:text-red-600 text-xl"
+                className="text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:text-slate-200 font-bold text-sm cursor-pointer"
               >
                 ✕
               </button>
             </div>
 
             {selectedReport.reportKind === "revenue" ? (
-              <div className="space-y-4">
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="bg-blue-50 rounded-lg p-4">
-                    <p className="text-sm text-gray-500">Revenue</p>
-                    <p className="text-xl font-bold text-blue-900">
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div className="bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800 rounded-lg p-4">
+                    <p className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Revenue</p>
+                    <p className="text-lg font-bold text-slate-900 dark:text-white mt-1 font-mono">
                       {selectedReport.totalRevenue.toLocaleString()} MMK
                     </p>
                   </div>
-                  <div className="bg-green-50 rounded-lg p-4">
-                    <p className="text-sm text-gray-500">Payments</p>
-                    <p className="text-xl font-bold text-green-700">
+                  <div className="bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800 rounded-lg p-4">
+                    <p className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Payments</p>
+                    <p className="text-lg font-bold text-slate-900 dark:text-white mt-1 font-mono">
                       {selectedReport.totalPayments}
                     </p>
                   </div>
-                  <div className="bg-gray-50 rounded-lg p-4">
-                    <p className="text-sm text-gray-500">Date</p>
-                    <p className="text-xl font-bold text-gray-800">
+                  <div className="bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800 rounded-lg p-4">
+                    <p className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Date</p>
+                    <p className="text-lg font-bold text-slate-900 dark:text-white mt-1 font-mono">
                       {selectedReport.date}
                     </p>
                   </div>
                 </div>
 
-                <div className="max-h-[400px] overflow-y-auto border rounded-lg">
-                  <table className="w-full">
-                    <thead className="bg-gray-50">
+                <div className="max-h-[300px] overflow-y-auto border border-slate-200 dark:border-slate-800 rounded-lg">
+                  <table className="w-full text-left">
+                    <thead className="bg-slate-50 dark:bg-slate-900/60 text-slate-500 dark:text-slate-400 text-[10px] font-mono uppercase tracking-wider border-b border-slate-200 dark:border-slate-800">
                       <tr>
-                        <th className="px-4 py-3 text-left text-sm">Room</th>
-                        <th className="px-4 py-3 text-left text-sm">Amount</th>
-                        <th className="px-4 py-3 text-left text-sm">Status</th>
-                        <th className="px-4 py-3 text-left text-sm">
-                          Due Date
-                        </th>
+                        <th className="px-4 py-2.5">Room</th>
+                        <th className="px-4 py-2.5">Amount</th>
+                        <th className="px-4 py-2.5">Status</th>
+                        <th className="px-4 py-2.5">Due Date</th>
                       </tr>
                     </thead>
 
-                    <tbody>
+                    <tbody className="divide-y divide-slate-200 dark:divide-slate-800/80 text-sm">
                       {selectedReport.bills.length === 0 ? (
                         <tr>
                           <td
                             colSpan="4"
-                            className="px-4 py-6 text-center text-gray-500"
+                            className="px-4 py-6 text-center text-slate-500 dark:text-slate-400 font-medium"
                           >
                             No paid payment data found
                           </td>
                         </tr>
                       ) : (
                         selectedReport.bills.map((bill) => (
-                          <tr key={bill._id} className="border-t">
-                            <td className="px-4 py-3 text-sm">
+                          <tr key={bill._id} className="hover:bg-slate-50 dark:hover:bg-slate-900/30 transition-colors">
+                            <td className="px-4 py-3 text-slate-900 dark:text-white font-semibold font-mono">
                               {bill.room_id?.room_number ||
                                 bill.room_id?._id ||
                                 "N/A"}
                             </td>
-                            <td className="px-4 py-3 text-sm">
+                            <td className="px-4 py-3 text-slate-800 dark:text-slate-200 font-semibold font-mono">
                               {Number(bill.amount || 0).toLocaleString()} MMK
                             </td>
-                            <td className="px-4 py-3 text-sm">{bill.status}</td>
-                            <td className="px-4 py-3 text-sm">
+                            <td className="px-4 py-3">
+                              <span className="inline-block px-2 py-0.5 rounded text-[10px] font-medium border bg-emerald-500/10 text-emerald-400 border-emerald-500/20">
+                                {bill.status}
+                              </span>
+                            </td>
+                            <td className="px-4 py-3 text-slate-500 dark:text-slate-400 font-mono">
                               {bill.due_date
                                 ? new Date(bill.due_date).toLocaleDateString()
                                 : "N/A"}
@@ -469,9 +447,8 @@ export default function ReportsPage() {
                   </table>
                 </div>
 
-                <div className="flex justify-end">
+                <div className="flex justify-end pt-4 border-t border-slate-200 dark:border-slate-800">
                   <Button
-                    variant="secondary"
                     onClick={() => downloadRevenuePDF(selectedReport)}
                   >
                     Download PDF
@@ -479,37 +456,30 @@ export default function ReportsPage() {
                 </div>
               </div>
             ) : (
-              <div className="space-y-3 text-sm text-gray-700">
-                <p>
-                  <strong>Title:</strong> {selectedReport.title || "N/A"}
-                </p>
-                <p>
-                  <strong>Type:</strong> {selectedReport.type || "N/A"}
-                </p>
-                <p>
-                  <strong>Status:</strong> {selectedReport.status || "Pending"}
-                </p>
-                <p>
-                  <strong>Location:</strong> {selectedReport.location || "N/A"}
-                </p>
-                <p>
-                  <strong>Message:</strong>
-                </p>
-                <div className="bg-gray-50 border rounded-lg p-4">
-                  {selectedReport.message || "No message"}
+              <div className="space-y-4 text-sm text-slate-700 dark:text-slate-300">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-50 dark:bg-slate-900/30 p-5 rounded-lg border border-slate-200 dark:border-slate-800 font-medium">
+                  <div><strong className="text-slate-500 dark:text-slate-400 uppercase text-[10px] tracking-wider block mb-1">Title</strong> {selectedReport.title || "—"}</div>
+                  <div><strong className="text-slate-500 dark:text-slate-400 uppercase text-[10px] tracking-wider block mb-1">Type</strong> {selectedReport.type || "—"}</div>
+                  <div><strong className="text-slate-500 dark:text-slate-400 uppercase text-[10px] tracking-wider block mb-1">Status</strong> {selectedReport.status || "Pending"}</div>
+                  <div><strong className="text-slate-500 dark:text-slate-400 uppercase text-[10px] tracking-wider block mb-1">Location</strong> {selectedReport.location || "—"}</div>
+                  <div className="sm:col-span-2">
+                    <strong className="text-slate-500 dark:text-slate-400 uppercase text-[10px] tracking-wider block mb-1.5">Message</strong>
+                    <div className="bg-white dark:bg-[#0e1422] border border-slate-200 dark:border-slate-800 rounded-lg p-4 text-slate-800 dark:text-slate-200 leading-relaxed font-medium">
+                      {selectedReport.message || "No message"}
+                    </div>
+                  </div>
+                  <div className="sm:col-span-2 font-mono">
+                    <strong className="text-slate-500 dark:text-slate-400 uppercase text-[10px] tracking-wider block mb-1 font-sans">Submitted Date</strong>{" "}
+                    {selectedReport.created_at
+                      ? new Date(selectedReport.created_at).toLocaleString()
+                      : selectedReport.createdAt
+                        ? new Date(selectedReport.createdAt).toLocaleString()
+                        : "—"}
+                  </div>
                 </div>
-                <p>
-                  <strong>Submitted Date:</strong>{" "}
-                  {selectedReport.created_at
-                    ? new Date(selectedReport.created_at).toLocaleString()
-                    : selectedReport.createdAt
-                      ? new Date(selectedReport.createdAt).toLocaleString()
-                      : "N/A"}
-                </p>
 
-                <div className="flex justify-end">
+                <div className="flex justify-end pt-4 border-t border-slate-200 dark:border-slate-800">
                   <Button
-                    variant="secondary"
                     onClick={() => downloadUserReportPDF(selectedReport)}
                   >
                     Download PDF
@@ -518,8 +488,8 @@ export default function ReportsPage() {
               </div>
             )}
 
-            <div className="flex justify-end gap-2 mt-5">
-              <Button variant="ghost" onClick={() => setSelectedReport(null)}>
+            <div className="flex justify-end gap-2.5 mt-5">
+              <Button variant="secondary" onClick={() => setSelectedReport(null)}>
                 Close
               </Button>
             </div>

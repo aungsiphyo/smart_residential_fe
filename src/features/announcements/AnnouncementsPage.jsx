@@ -82,8 +82,8 @@ export default function AnnouncementsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-blue-900">Announcements</h1>
-          <p className="text-gray-500 text-sm mt-1">Publish community announcements</p>
+          <h1 className="text-2xl font-bold tracking-tight text-white">Announcements</h1>
+          <p className="text-slate-400 text-sm mt-1">Publish community announcements</p>
         </div>
         <div className="flex items-center gap-3">
           <Button variant="primary" onClick={() => setShowCreate(true)}>+ New Announcement</Button>
@@ -91,22 +91,22 @@ export default function AnnouncementsPage() {
       </div>
 
       {loading ? (
-        <div className="p-8 text-center text-gray-500">Loading announcements...</div>
+        <div className="p-8 text-center text-slate-400 text-sm">Loading announcements...</div>
       ) : error ? (
-        <div className="p-6 bg-red-50 border border-red-200 rounded-xl text-red-700">{error}</div>
+        <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-lg text-sm text-red-400 font-medium">{error}</div>
       ) : (
         <AnnouncementList items={items} onView={(a) => setSelected(a)} />
       )}
 
       {showCreate && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
-          <div className="w-full max-w-2xl rounded-[16px] bg-white p-6 shadow-2xl border border-gray-200">
-            <div className="flex justify-between items-start mb-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm px-4">
+          <div className="w-full max-w-2xl rounded-xl bg-[#0e1422] p-6 border border-slate-800">
+            <div className="flex justify-between items-start mb-6">
               <div>
-                <h3 className="text-xl font-bold">New Announcement</h3>
-                <p className="text-sm text-gray-500">Publish a community announcement</p>
+                <h3 className="text-lg font-bold text-white">New Announcement</h3>
+                <p className="text-xs text-slate-400 mt-1">Publish a community announcement</p>
               </div>
-              <button onClick={() => setShowCreate(false)} className="text-gray-500 hover:text-gray-900">✕</button>
+              <button onClick={() => setShowCreate(false)} className="text-slate-400 hover:text-slate-200 font-bold text-sm cursor-pointer">✕</button>
             </div>
 
             <AnnouncementForm onCancel={() => setShowCreate(false)} onSubmit={async (data) => { await handleCreate(data); setShowCreate(false); }} />
@@ -115,21 +115,21 @@ export default function AnnouncementsPage() {
       )}
 
       {selected && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
-          <div className="w-full max-w-2xl rounded-[16px] bg-white p-6 shadow-2xl border border-gray-200">
-            <div className="flex justify-between items-start mb-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm px-4">
+          <div className="w-full max-w-2xl rounded-xl bg-[#0e1422] p-6 border border-slate-800">
+            <div className="flex justify-between items-start mb-5">
               <div>
-                <h3 className="text-xl font-bold">{selected.title}</h3>
-                <p className="text-sm text-gray-500">{selected.type} • {selected.created_at ? new Date(selected.created_at).toLocaleString() : ''}</p>
+                <h3 className="text-lg font-bold text-white">{selected.title}</h3>
+                <p className="text-xs text-slate-400 mt-1">{selected.type} • {selected.created_at ? new Date(selected.created_at).toLocaleString() : ''}</p>
               </div>
-              <button onClick={() => setSelected(null)} className="text-gray-500 hover:text-gray-900">✕</button>
+              <button onClick={() => setSelected(null)} className="text-slate-400 hover:text-slate-200 font-bold text-sm cursor-pointer">✕</button>
             </div>
 
-            <div className="prose">
-              <p>{selected.message}</p>
+            <div className="bg-slate-900/40 p-4.5 rounded-lg border border-slate-800 font-medium text-sm text-slate-200 leading-relaxed mb-5">
+              {selected.message}
             </div>
 
-            <div className="mt-4 flex justify-end">
+            <div className="flex justify-end border-t border-slate-800 pt-4">
               <Button variant="secondary" onClick={() => setSelected(null)}>Close</Button>
             </div>
           </div>

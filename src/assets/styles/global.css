@@ -1,1 +1,164 @@
 @import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-theme-bg: var(--theme-bg);
+  --color-theme-card: var(--theme-card);
+  --color-theme-sidebar: var(--theme-sidebar);
+  --color-theme-border: var(--theme-border);
+  --color-theme-text-primary: var(--theme-text-primary);
+  --color-theme-text-secondary: var(--theme-text-secondary);
+  --color-theme-text-muted: var(--theme-text-muted);
+  --color-theme-input: var(--theme-input);
+  --color-theme-table-hdr: var(--theme-table-hdr);
+  --color-theme-row-hover: var(--theme-row-hover);
+  --color-theme-hover-bg: var(--theme-hover-bg);
+  --color-theme-bg-subtle: var(--theme-bg-subtle);
+  --color-theme-bg-subtle-20: var(--theme-bg-subtle-20);
+}
+
+:root {
+  --theme-bg: #f9fafb; /* gray-50 */
+  --theme-card: #ffffff; /* pure white */
+  --theme-sidebar: #f3f4f6; /* gray-100 sidebar */
+  --theme-border: #e5e7eb; /* gray-200 */
+  --theme-text-primary: #111827; /* gray-900 */
+  --theme-text-secondary: #374151; /* gray-700 */
+  --theme-text-muted: #6b7280; /* gray-500 */
+  --theme-input: #ffffff; /* input bg */
+  --theme-table-hdr: #f9fafb; /* table header bg */
+  --theme-row-hover: rgba(243, 244, 246, 0.8);
+  --theme-sidebar-hover: rgba(17, 24, 39, 0.05);
+  --theme-hover-bg: #e5e7eb; /* gray-200 */
+  --theme-bg-subtle: rgba(243, 244, 246, 0.6);
+  --theme-bg-subtle-20: rgba(243, 244, 246, 0.4);
+}
+
+.dark {
+  --theme-bg: #0b0f19;
+  --theme-card: #0e1422;
+  --theme-sidebar: #090d16;
+  --theme-border: rgba(30, 41, 59, 0.8); /* slate-800 */
+  --theme-text-primary: #ffffff;
+  --theme-text-secondary: #cbd5e1; /* slate-300 */
+  --theme-text-muted: #64748b; /* slate-500 */
+  --theme-input: rgba(15, 23, 42, 0.4); /* slate-900/40 */
+  --theme-table-hdr: rgba(15, 23, 42, 0.6); /* slate-900/60 */
+  --theme-row-hover: rgba(15, 23, 42, 0.3); /* slate-900/30 */
+  --theme-sidebar-hover: rgba(255, 255, 255, 0.05);
+  --theme-hover-bg: #1e293b; /* slate-800 */
+  --theme-bg-subtle: rgba(15, 23, 42, 0.3);
+  --theme-bg-subtle-20: rgba(15, 23, 42, 0.2);
+}
+
+@layer base {
+  body {
+    @apply bg-theme-bg text-theme-text-primary antialiased transition-colors duration-200;
+  }
+}
+
+@layer utilities {
+  /* Override background utility classes to refer to theme variables */
+  .bg-\[\#0b0f19\] {
+    background-color: var(--theme-bg) !important;
+  }
+  
+  /* Make header have a clean card background (white in light mode) */
+  header.bg-\[\#0b0f19\] {
+    background-color: var(--theme-card) !important;
+  }
+
+  .bg-\[\#0e1422\] {
+    background-color: var(--theme-card) !important;
+  }
+
+  /* Override input/table background utility classes */
+  .bg-slate-900\/40 {
+    background-color: var(--theme-input) !important;
+  }
+  .bg-slate-900\/60 {
+    background-color: var(--theme-table-hdr) !important;
+  }
+
+  .bg-slate-900 {
+    background-color: var(--theme-border) !important;
+  }
+  .bg-slate-900\/30 {
+    background-color: var(--theme-bg-subtle) !important;
+  }
+  .bg-slate-900\/20 {
+    background-color: var(--theme-bg-subtle-20) !important;
+  }
+
+  /* Override border utility classes */
+  .border-slate-800 {
+    border-color: var(--theme-border) !important;
+  }
+  .border-slate-800\/80 {
+    border-color: var(--theme-border) !important;
+  }
+  .border-slate-800\/60 {
+    border-color: var(--theme-border) !important;
+  }
+  .border-slate-800\/50 {
+    border-color: var(--theme-border) !important;
+  }
+  .border-slate-900\/60 {
+    border-color: var(--theme-border) !important;
+  }
+
+  /* Override text utility classes, excluding elements inside the dark auth panels */
+  .text-slate-100:not(.dark-panel *) {
+    color: var(--theme-text-primary) !important;
+  }
+  .text-slate-200:not(.dark-panel *) {
+    color: var(--theme-text-primary) !important;
+  }
+  .text-slate-300:not(.dark-panel *) {
+    color: var(--theme-text-secondary) !important;
+  }
+  .text-slate-400:not(.dark-panel *) {
+    color: var(--theme-text-muted) !important;
+  }
+  .text-slate-500:not(.dark-panel *) {
+    color: var(--theme-text-muted) !important;
+  }
+
+  /* When NOT in dark mode, force text-white elements inside tables, headers, and cards (but NOT inside buttons/dark auth panels) to use the primary text color */
+  html:not(.dark) .text-white:not(button):not(button *):not(a):not(a *):not(.dark-panel *) {
+    color: var(--theme-text-primary) !important;
+  }
+
+  /* Hover utility overrides */
+  .hover\:bg-slate-900\/30:hover {
+    background-color: var(--theme-row-hover) !important;
+  }
+  /* Override hover:bg-white/5 to use theme-sidebar-hover */
+  .hover\:bg-white\/5:hover {
+    background-color: var(--theme-sidebar-hover) !important;
+  }
+  .hover\:text-slate-200:hover {
+    color: var(--theme-text-primary) !important;
+  }
+  .hover\:text-slate-300:hover {
+    color: var(--theme-text-primary) !important;
+  }
+  .hover\:bg-slate-800:hover {
+    background-color: var(--theme-hover-bg) !important;
+  }
+  .hover\:bg-slate-800\/40:hover {
+    background-color: var(--theme-sidebar-hover) !important;
+  }
+  .hover\:bg-slate-900\/60:hover {
+    background-color: var(--theme-table-hdr) !important;
+  }
+  .hover\:bg-slate-900\/40:hover {
+    background-color: var(--theme-row-hover) !important;
+  }
+
+  /* When NOT in dark mode, override hover:text-white to keep text readable on light hover backgrounds (excluding dark panels) */
+  html:not(.dark) .hover\:text-white:not(.dark-panel *):hover {
+    color: var(--theme-text-primary) !important;
+  }
+}

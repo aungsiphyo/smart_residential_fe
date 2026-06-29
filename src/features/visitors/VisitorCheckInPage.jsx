@@ -2,50 +2,50 @@ import Button from "../../components/ui/Button";
 
 export default function VisitorCheckInPage() {
   const visitorsData = [
-    { id: 1, name: "John Visitor", room: "101", date: "May 2, 2024", time: "10:30 AM", status: "Checked In" },
-    { id: 2, name: "Emily Brown", room: "205", date: "May 2, 2024", time: "2:15 PM", status: "Checked Out" },
-    { id: 3, name: "David Lee", room: "302", date: "May 2, 2024", time: "3:45 PM", status: "Checked In" },
+    { id: 1, name: "Kyaw Kyaw", room: "101", date: "May 2, 2026", time: "10:30 AM", status: "Checked In" },
+    { id: 2, name: "Hla Hla", room: "205", date: "May 2, 2026", time: "2:15 PM", status: "Checked Out" },
+    { id: 3, name: "Aung Aung", room: "302", date: "May 2, 2026", time: "3:45 PM", status: "Checked In" },
   ];
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-blue-900">Visitor Check-in</h1>
-          <p className="text-gray-500 text-sm mt-1">Track visitor entries and exits</p>
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Visitor Check-in</h1>
+          <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Track visitor entries and exits</p>
         </div>
       </div>
 
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-        <table className="w-full">
-          <thead className="bg-gray-50 border-b border-gray-200">
+      <div className="bg-white dark:bg-[#0e1422] rounded-lg border border-slate-200 dark:border-slate-800 overflow-hidden">
+        <table className="w-full text-left">
+          <thead className="bg-slate-50 dark:bg-slate-900/60 border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 text-[10px] font-mono uppercase tracking-wider">
             <tr>
-              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Visitor Name</th>
-              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Room</th>
-              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Date</th>
-              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Time</th>
-              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Status</th>
-              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Actions</th>
+              <th className="px-6 py-3 font-semibold">Visitor Name</th>
+              <th className="px-6 py-3 font-semibold">Room</th>
+              <th className="px-6 py-3 font-semibold">Date</th>
+              <th className="px-6 py-3 font-semibold">Time</th>
+              <th className="px-6 py-3 font-semibold">Status</th>
+              <th className="px-6 py-3 font-semibold text-right">Actions</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="divide-y divide-slate-200 dark:divide-slate-800/80">
             {visitorsData.map((visitor) => (
-              <tr key={visitor.id} className="border-b border-gray-200 hover:bg-gray-50">
-                <td className="px-6 py-4 text-sm text-gray-900 font-semibold">{visitor.name}</td>
-                <td className="px-6 py-4 text-sm text-gray-600">{visitor.room}</td>
-                <td className="px-6 py-4 text-sm text-gray-600">{visitor.date}</td>
-                <td className="px-6 py-4 text-sm text-gray-600">{visitor.time}</td>
-                <td className="px-6 py-4 text-sm">
-                  <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
+              <tr key={visitor.id} className="hover:bg-slate-50 dark:hover:bg-slate-900/30 transition-colors text-sm">
+                <td className="px-6 py-4 text-slate-900 dark:text-white font-semibold">{visitor.name}</td>
+                <td className="px-6 py-4 text-slate-700 dark:text-slate-300 font-medium font-mono">{visitor.room}</td>
+                <td className="px-6 py-4 text-slate-700 dark:text-slate-300 font-medium">{visitor.date}</td>
+                <td className="px-6 py-4 text-slate-700 dark:text-slate-300 font-medium">{visitor.time}</td>
+                <td className="px-6 py-4">
+                  <span className={`px-2 py-0.5 rounded text-[10px] font-medium border inline-flex items-center justify-center ${
                     visitor.status === "Checked In" 
-                      ? "bg-green-100 text-green-700" 
-                      : "bg-gray-100 text-gray-700"
+                      ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" 
+                      : "bg-slate-900 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-800"
                   }`}>
                     {visitor.status}
                   </span>
                 </td>
-                <td className="px-6 py-4 text-sm">
-                  <Button variant="ghost" size="sm">View</Button>
+                <td className="px-6 py-4 text-right">
+                  <Button variant="secondary" size="sm">View</Button>
                 </td>
               </tr>
             ))}
