@@ -27,7 +27,6 @@ import ParkingPage from "../features/parking/ParkingPage";
 import SettingsPage from "../features/settings/SettingsPage";
 import Login from "../features/auth/pages/Login";
 import OTP from "../features/auth/pages/OTP";
-import Signup from "../features/auth/pages/Signup";
 import ProtectedRoute from "./ProtectedRoute";
 
 export const router = createBrowserRouter([
@@ -55,6 +54,5 @@ export const router = createBrowserRouter([
     ],
   },
   { path: "/login", element: <Login /> },
-  { path: "/signup", element: <Signup /> },
   { path: "/otp", element: <OTP /> },
 ]);

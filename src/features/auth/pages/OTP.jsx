@@ -3,9 +3,11 @@ import OTPForm from "../components/OTPForm";
 import { Building2 } from "lucide-react";
 import { translations } from "../utils/translations";
 import LanguageToggle from "../components/LanguageToggle";
+import axios from "axios";
 
 export default function OTP() {
   const [lang, setLang] = useState(localStorage.getItem("lang") || "en");
+  const [stats, setStats] = useState({ activeResidents: null, availableRooms: null });
 
   useEffect(() => {
     const handleStorageChange = () => {
@@ -13,6 +15,15 @@ export default function OTP() {
     };
     window.addEventListener("storage", handleStorageChange);
     return () => window.removeEventListener("storage", handleStorageChange);
+  }, []);
+
+  useEffect(() => {
+    axios
+      .get(`${import.meta.env.VITE_API_BASE_URL || "https://54.87.203.253.sslip.io/api"}/public/stats`)
+      .then((res) => {
+        if (res.data.success) setStats(res.data.data);
+      })
+      .catch(() => {});
   }, []);
 
   const t = translations[lang];
@@ -53,12 +64,16 @@ export default function OTP() {
           {/* Mini Stats Grid */}
           <div className="grid grid-cols-2 gap-6 mt-12 border-t border-white/10 pt-8">
             <div>
-              <p className="text-3xl font-extrabold text-white">{t.residentsCount}</p>
+              <p className="text-3xl font-extrabold text-white">
+                {stats.activeResidents !== null ? stats.activeResidents.toLocaleString() : "—"}
+              </p>
               <p className="text-xs text-slate-400 mt-1">{t.activeResidents}</p>
             </div>
             <div>
-              <p className="text-3xl font-extrabold text-white">{t.uptimePercentage}</p>
-              <p className="text-xs text-slate-400 mt-1">{t.systemUptime}</p>
+              <p className="text-3xl font-extrabold text-white">
+                {stats.availableRooms !== null ? stats.availableRooms.toLocaleString() : "—"}
+              </p>
+              <p className="text-xs text-slate-400 mt-1">{t.availableRooms}</p>
             </div>
           </div>
         </div>
@@ -92,3 +107,4 @@ export default function OTP() {
     </div>
   );
 }
+

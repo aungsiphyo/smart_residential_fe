@@ -4,7 +4,7 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import Button from "../../components/ui/Button";
 
-const API_BASE_URL = "http://localhost:5001/api";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://54.87.203.253.sslip.io/api";
 
 export default function ReportsPage() {
   const [bills, setBills] = useState([]);

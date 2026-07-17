@@ -1,7 +1,7 @@
 import axios from "axios";
 import useAuthStore from "../features/auth/authStore";
 
-const baseURL = "http://localhost:5001/api";
+const baseURL = import.meta.env.VITE_API_BASE_URL || "https://54.87.203.253.sslip.io/api";
 const API = axios.create({ baseURL });
 
 API.interceptors.request.use((req) => {

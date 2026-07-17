@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, Bell, Settings, LogOut } from "lucide-react";
+import { LogOut } from "lucide-react";
 import useAuthStore from "../../features/auth/authStore";
 import { logoutRequest } from "../../features/auth/api";
 import ThemeToggle from "./ThemeToggle";
@@ -51,16 +51,7 @@ export default function Header() {
 
   return (
     <header className="bg-[#0b0f19] border-b border-slate-800/80 px-8 py-4 flex items-center justify-between transition-colors duration-200">
-      {/* Search Bar container with search icon */}
-      <div className="flex-1 max-w-md relative flex items-center">
-        <Search size={14} className="absolute left-3.5 text-slate-400 pointer-events-none" />
-        <input
-          className="w-full rounded-lg border border-slate-800 bg-slate-900/40 pl-10 pr-4 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-700/20 focus:border-blue-700/60 transition-all text-slate-200 placeholder-slate-500 font-medium"
-          placeholder="Search items, database, or settings..."
-        />
-      </div>
-
-      <div className="flex items-center gap-5">
+      <div className="flex items-center gap-5 ml-auto">
         {/* Simple Header Language Switcher (EN / MY) */}
         <div className="flex items-center gap-1.5 text-xs font-bold text-slate-400 select-none border-r border-slate-800/60 pr-5">
           <button
@@ -86,17 +77,6 @@ export default function Header() {
 
         {/* Theme Toggle Button */}
         <ThemeToggle />
-
-        {/* Notifications button */}
-        <button className="relative text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 transition flex items-center justify-center p-2 rounded-lg cursor-pointer">
-          <Bell size={18} />
-          <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-red-500 rounded-full" />
-        </button>
-
-        {/* Settings button */}
-        <button className="text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 transition flex items-center justify-center p-2 rounded-lg cursor-pointer">
-          <Settings size={18} />
-        </button>
 
         {/* Profile info & logout */}
         <div className="flex items-center gap-3 pl-5 border-l border-slate-800/60">

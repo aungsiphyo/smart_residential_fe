@@ -1,18 +1,16 @@
 export const translations = {
   en: {
     // Brand panel (left side)
-    brandTitle: "InnoCity",
+    brandTitle: "Prime City",
     brandSubtitle: "Smart Residential Management",
-    welcomeBadge: "Welcome to InnoCity",
+    welcomeBadge: "Welcome to Prime City",
     headline: "Managing your residential ecosystem effortlessly.",
     descriptionSignup: "Register your resident, staff, or administrator account to access live facility status, bill payments, and smart visitor check-ins.",
     descriptionLogin: "Sign in with your resident, staff, or administrator account to access live facility status, bill payments, and smart visitor check-ins.",
     descriptionOtp: "We require an extra security code to confirm your authorization. Enter the OTP code sent to your email to verify your identity.",
     activeResidents: "Active Residents",
-    residentsCount: "1,280+",
-    systemUptime: "System Uptime",
-    uptimePercentage: "99.9%",
-    copyright: `© ${new Date().getFullYear()} InnoCity Corp. All rights reserved.`,
+    availableRooms: "Available Rooms",
+    copyright: `© ${new Date().getFullYear()} Prime City Corp. All rights reserved.`,
     securityFirst: "Security First",
     twoStepVerification: "Two-Step Identity Verification",
 
@@ -62,18 +60,16 @@ export const translations = {
   },
   my: {
     // Brand panel (left side)
-    brandTitle: "InnoCity",
+    brandTitle: "Prime City",
     brandSubtitle: "အဆင့်မြင့် အိမ်ရာစီမံခန့်ခွဲမှုစနစ်",
-    welcomeBadge: "InnoCity မှ ကြိုဆိုပါသည်",
+    welcomeBadge: "Prime City မှ ကြိုဆိုပါသည်",
     headline: "သင့်အိမ်ရာပတ်ဝန်းကျင်ကို အလွယ်ကူဆုံး စီမံခန့်ခွဲလိုက်ပါ။",
     descriptionSignup: "အိမ်ရာအတွင်း နေထိုင်သူများ၊ ဝန်ထမ်းများနှင့် စီမံခန့်ခွဲသူများအတွက် အကောင့်ဖွင့်လှစ်ပြီး အိမ်ရာဝန်ဆောင်မှုများ၊ ငွေတောင်းခံလွှာများနှင့် ဧည့်သည်ဝင်ထွက်မှုများကို တိုက်ရိုက် စီမံနိုင်ပါပြီ။",
     descriptionLogin: "အိမ်ရာဝန်ဆောင်မှုများ၊ ငွေတောင်းခံလွှာများနှင့် ဧည့်သည်ဝင်ထွက်မှုများကို စီမံနိုင်ရန် သင့်အကောင့်ဖြင့် ဝင်ရောက်ပါ။",
     descriptionOtp: "သင့်အကောင့်လုံခြုံရေးအတွက် လုပ်ဆောင်ချက်ကို အတည်ပြုရန် လိုအပ်ပါသည်။ သင့်အီးမေးလ်သို့ ပေးပို့ထားသော OTP ကုဒ်ကို ထည့်သွင်းပေးပါ။",
     activeResidents: "နေထိုင်သူဦးရေ",
-    residentsCount: "၁,၂၈၀+",
-    systemUptime: "စနစ်အဆင်ပြေမှုနှုန်း",
-    uptimePercentage: "၉၉.၉%",
-    copyright: `© ${new Date().getFullYear()} InnoCity Corp. မူပိုင်ခွင့်များအားလုံး ရယူပြီးဖြစ်သည်။`,
+    availableRooms: "ရနိုင်သောအခန်းများ",
+    copyright: `© ${new Date().getFullYear()} Prime City Corp. မူပိုင်ခွင့်များအားလုံး ရယူပြီးဖြစ်သည်။`,
     securityFirst: "လုံခြုံရေးသည် ပထမ",
     twoStepVerification: "အဆင့်နှစ်ဆင့်ဖြင့် အကောင့်စစ်ဆေးခြင်း",
 

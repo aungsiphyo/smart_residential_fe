@@ -286,7 +286,7 @@ export default function UserBillsPage() {
                   >
                     {isProcessing ? "Processing..." : `Pay ${Number(selectedBill.amount).toLocaleString()} MMK`}
                   </button>
-                  <p className="text-center text-xs text-gray-400 dark:text-slate-500 mt-4 font-medium">Secured by InnoCity Trust</p>
+                  <p className="text-center text-xs text-gray-400 dark:text-slate-500 mt-4 font-medium">Secured by Prime City Trust</p>
                 </div>
               </>
             )}

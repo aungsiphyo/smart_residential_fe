@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 import useAuthStore from "../../features/auth/authStore";
 
-const API_BASE_URL = "http://localhost:5001/api";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://54.87.203.253.sslip.io/api";
 
 const menu = [
   { label: "Dashboard", icon: LayoutDashboard, path: "/" },
@@ -98,7 +98,7 @@ export default function Sidebar() {
       {/* Logo Section */}
       <div className="p-5 border-b border-slate-200 dark:border-slate-800">
         <h1 className="text-md font-bold text-slate-900 dark:text-white flex items-center gap-2 tracking-tight">
-          InnoCity
+          Prime City
           <span className="text-[10px] font-bold tracking-wider uppercase bg-blue-500/10 text-blue-600 dark:text-blue-400 px-2 py-0.5 rounded border border-blue-500/20">
             {user?.role || "Citizen"}
           </span>

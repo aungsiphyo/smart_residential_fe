@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { Mail, Lock, ShieldAlert } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Mail, Lock, ShieldAlert, ShieldX } from "lucide-react";
 import { useAuthActions } from "../hooks";
 import { translations } from "../utils/translations";
 
@@ -10,6 +10,7 @@ export default function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [accessDenied, setAccessDenied] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const [lang, setLang] = useState(localStorage.getItem("lang") || "en");
@@ -27,15 +28,18 @@ export default function LoginForm() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     setError("");
+    setAccessDenied(false);
     setLoading(true);
 
     try {
       await loginPassword({ email, password });
       navigate("/otp", { state: { email } });
     } catch (err) {
-      setError(
-        err.response?.data?.message || t.loginError
-      );
+      if (err.response?.status === 403) {
+        setAccessDenied(true);
+      } else {
+        setError(err.response?.data?.message || t.loginError);
+      }
     } finally {
       setLoading(false);
     }
@@ -84,13 +88,26 @@ export default function LoginForm() {
           </div>
         </div>
 
-        {/* Error messaging */}
-        {error ? (
+        {/* Access Denied Toast */}
+        {accessDenied && (
+          <div className="p-3.5 bg-red-50 border border-red-200 rounded-xl flex items-start gap-3 animate-[fadeIn_0.2s_ease]">
+            <ShieldX size={18} className="text-red-500 flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="text-xs font-bold text-red-700 leading-snug">Access Denied</p>
+              <p className="text-xs text-red-600 mt-0.5 leading-snug">
+                Only <span className="font-bold">Admin</span> accounts can access this dashboard.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Generic Error */}
+        {error && !accessDenied && (
           <div className="p-3 bg-red-50 border border-red-200/50 rounded-lg flex items-center gap-2">
             <ShieldAlert size={15} className="text-red-600 flex-shrink-0" />
             <p className="text-xs font-semibold text-red-800">{error}</p>
           </div>
-        ) : null}
+        )}
 
         {/* Submit */}
         <button
@@ -102,13 +119,7 @@ export default function LoginForm() {
         </button>
       </form>
 
-      {/* Signup Link */}
-      <div className="mt-5 text-center text-sm text-zinc-500 font-medium">
-        {t.dontHaveAccount}{" "}
-        <Link to="/signup" className="font-semibold text-blue-700 hover:text-blue-800 hover:underline">
-          {t.signUpLink}
-        </Link>
-      </div>
+
     </div>
   );
 }
