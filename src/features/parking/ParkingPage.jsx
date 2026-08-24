@@ -1,9 +1,10 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import { io } from "socket.io-client";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Button from "../../components/ui/Button";
+import {
+  createAuthenticatedSocket,
+  disconnectAuthenticatedSocket,
+} from "../../services/socket";
 import { fetchParking, patchParkingDelta, patchParkingReset } from "./api";
-
-const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || "http://localhost:5001";
 
 const TYPE_META = {
   resident: {
@@ -24,6 +25,7 @@ export default function ParkingPage() {
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const [lastEvent, setLastEvent] = useState(null);
+  const [socketConnected, setSocketConnected] = useState(false);
   const socketRef = useRef(null);
 
   const loadParking = async () => {
@@ -43,18 +45,38 @@ export default function ParkingPage() {
   };
 
   useEffect(() => {
+    // Initial remote data hydration is intentionally performed on mount.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     loadParking();
   }, []);
 
   useEffect(() => {
-    const socket = io(SOCKET_URL);
+    const socket = createAuthenticatedSocket();
     socketRef.current = socket;
+    let active = true;
 
-    socket.on("connect", () => {
+    const handleConnect = async () => {
+      setSocketConnected(true);
       console.debug("Parking socket connected", socket.id);
-    });
 
-    socket.on("parking_update", (payload) => {
+      // Re-sync after every successful connection in case an update happened
+      // while the browser was offline or the access token was refreshing.
+      try {
+        const response = await fetchParking();
+        if (active) setParkingData(response.data?.data || []);
+      } catch (err) {
+        console.warn(
+          "Unable to re-sync parking after socket connection:",
+          err.message,
+        );
+      }
+    };
+
+    const handleDisconnect = () => {
+      setSocketConnected(false);
+    };
+
+    const handleParkingUpdate = (payload) => {
       setParkingData((prev) => {
         const next = prev.map((item) =>
           item.type === payload.type ? payload : item,
@@ -72,17 +94,26 @@ export default function ParkingPage() {
         action: payload.usedSlot >= payload.availableSlot ? "Updated" : "Updated",
         timestamp: new Date().toISOString(),
       });
-    });
+    };
 
-    socket.on("connect_error", (err) => {
+    const handleConnectError = (err) => {
+      setSocketConnected(false);
       console.warn("Parking socket connection failed:", err.message);
-    });
+    };
+
+    socket.on("connect", handleConnect);
+    socket.on("disconnect", handleDisconnect);
+    socket.on("parking_update", handleParkingUpdate);
+    socket.on("connect_error", handleConnectError);
 
     return () => {
-      socket.off("connect");
-      socket.off("parking_update");
-      socket.off("connect_error");
-      socket.disconnect();
+      active = false;
+      socket.off("connect", handleConnect);
+      socket.off("disconnect", handleDisconnect);
+      socket.off("parking_update", handleParkingUpdate);
+      socket.off("connect_error", handleConnectError);
+      disconnectAuthenticatedSocket(socket);
+      socketRef.current = null;
     };
   }, []);
 
@@ -181,8 +212,8 @@ export default function ParkingPage() {
           <div className="flex flex-col gap-2 sm:items-end">
             <p className="text-xs font-medium text-slate-400">Live updates from building gates</p>
             <div className="inline-flex items-center gap-2 rounded-lg bg-slate-900 border border-slate-800 px-3 py-1 text-xs font-semibold text-slate-300">
-              <span className={`h-2 w-2 rounded-full ${socketRef.current?.connected ? "bg-emerald-500 animate-pulse" : "bg-amber-500"}`} />
-              live sync {socketRef.current?.connected ? "on" : "connecting"}
+              <span className={`h-2 w-2 rounded-full ${socketConnected ? "bg-emerald-500 animate-pulse" : "bg-amber-500"}`} />
+              live sync {socketConnected ? "on" : "connecting"}
             </div>
           </div>
         </div>
@@ -310,8 +341,8 @@ export default function ParkingPage() {
             <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-4">Live status</p>
             <div className="flex items-center justify-between gap-3 rounded-lg border border-slate-800/40 bg-slate-900/40 p-4">
               <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Socket</span>
-              <span className={`px-2 py-0.5 rounded text-[10px] font-bold border inline-flex items-center justify-center ${socketRef.current?.connected ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" : "bg-amber-500/10 text-amber-400 border-amber-500/20 animate-pulse"}`}>
-                {socketRef.current?.connected ? "Connected" : "Connecting"}
+              <span className={`px-2 py-0.5 rounded text-[10px] font-bold border inline-flex items-center justify-center ${socketConnected ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" : "bg-amber-500/10 text-amber-400 border-amber-500/20 animate-pulse"}`}>
+                {socketConnected ? "Connected" : "Connecting"}
               </span>
             </div>
             <div className="mt-3 flex items-center justify-between gap-3 rounded-lg border border-slate-800/40 bg-slate-900/40 p-4">

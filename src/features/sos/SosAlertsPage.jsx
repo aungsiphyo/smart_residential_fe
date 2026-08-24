@@ -1,9 +1,10 @@
-import React, { useEffect, useRef, useState } from "react";
-import { io } from "socket.io-client";
+import { useEffect, useRef, useState } from "react";
 import Button from "../../components/ui/Button";
+import {
+  createAuthenticatedSocket,
+  disconnectAuthenticatedSocket,
+} from "../../services/socket";
 import { createSosAlert, getSosAlerts, updateSosAlert } from "./api";
-
-const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || "http://localhost:5001";
 
 export default function SosAlertsPage() {
   const [alerts, setAlerts] = useState([]);
@@ -17,39 +18,69 @@ export default function SosAlertsPage() {
   const [manualForm, setManualForm] = useState({ room_id: "", resident: "", message: "" });
   const [soundEnabled, setSoundEnabled] = useState(false);
   const audioRef = useRef(new Audio("https://actions.google.com/sounds/v1/alarms/beep_short.ogg"));
+  const soundEnabledRef = useRef(false);
 
   const socketRef = useRef(null);
 
   useEffect(() => {
-    socketRef.current = io(SOCKET_URL);
+    soundEnabledRef.current = soundEnabled;
+  }, [soundEnabled]);
+
+  useEffect(() => {
+    socketRef.current = createAuthenticatedSocket();
     const socket = socketRef.current;
 
-    socket.on("sos_alert", (data) => {
+    const handleNewAlert = (data) => {
       setAlerts((prev) => {
         const exists = prev.some((a) => (a._id && data._id && a._id === data._id) || (a.room === data.room && a.created_at === data.created_at));
         if (exists) return prev;
-        if (soundEnabled) audioRef.current.play().catch(() => {});
+        if (soundEnabledRef.current) audioRef.current.play().catch(() => {});
         return [data, ...prev];
       });
-    });
+    };
 
-    socket.on("sos_control", (update) => {
-      if (update?.action === "RESOLVE") {
+    const handleAlertUpdate = (update) => {
+      const isResolved =
+        update?.action === "RESOLVE" ||
+        String(update?.status || "").toLowerCase() === "resolved";
+
+      if (isResolved) {
         setAlerts((prev) => prev.filter((a) => (a._id ? a._id !== update._id : a !== update)));
-        setResolvedAlerts((prev) => [
-          { ...update, status: "Resolved", resolved_at: update.resolved_at || new Date().toISOString() },
-          ...prev,
-        ]);
+        setResolvedAlerts((prev) => {
+          const resolved = {
+            ...update,
+            status: "Resolved",
+            resolved_at: update.resolved_at || new Date().toISOString(),
+          };
+          const withoutCurrent = prev.filter((a) => a._id !== update._id);
+          return [resolved, ...withoutCurrent];
+        });
+        return;
       }
-    });
+
+      setAlerts((prev) =>
+        prev.map((alert) => (alert._id === update?._id ? update : alert)),
+      );
+    };
+
+    socket.on("sos_alert", handleNewAlert);
+    socket.on("sos_alert_created", handleNewAlert);
+    socket.on("admin_sos_alert", handleNewAlert);
+    socket.on("sos_control", handleAlertUpdate);
+    socket.on("sos_alert_updated", handleAlertUpdate);
+    socket.on("admin_sos_alert_updated", handleAlertUpdate);
 
     return () => {
-      socket.off("sos_alert");
-      socket.off("sos_control");
-      socket.disconnect();
+      socket.off("sos_alert", handleNewAlert);
+      socket.off("sos_alert_created", handleNewAlert);
+      socket.off("admin_sos_alert", handleNewAlert);
+      socket.off("sos_control", handleAlertUpdate);
+      socket.off("sos_alert_updated", handleAlertUpdate);
+      socket.off("admin_sos_alert_updated", handleAlertUpdate);
+      disconnectAuthenticatedSocket(socket);
       socketRef.current = null;
     };
-  }, [soundEnabled]);
+  }, []);
 
   useEffect(() => {
     const loadAlerts = async () => {

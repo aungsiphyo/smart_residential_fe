@@ -66,18 +66,24 @@ export default function VisitorChart({ chartData, breakdownData }) {
       </div>
 
       {/* Main Charts Layout */}
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+      <div className="grid min-w-0 grid-cols-1 xl:grid-cols-3 gap-8">
         
         {/* Bar Chart Container */}
-        <div className="xl:col-span-2 h-72">
+        <div className="xl:col-span-2 min-w-0">
           <p className="text-xs font-bold text-gray-500 dark:text-slate-400 mb-2 uppercase tracking-wider">
             Monthly Visitor Volume (Thousands)
           </p>
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart
-              data={barData}
-              margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+          <div className="h-64 min-h-64 min-w-0">
+            <ResponsiveContainer
+              width="100%"
+              height="100%"
+              minWidth={0}
+              initialDimension={{ width: 640, height: 256 }}
             >
+              <BarChart
+                data={barData}
+                margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+              >
               <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
               <XAxis 
                 dataKey="name" 
@@ -124,8 +130,9 @@ export default function VisitorChart({ chartData, breakdownData }) {
                 radius={[4, 4, 0, 0]} 
                 barSize={12}
               />
-            </BarChart>
-          </ResponsiveContainer>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
         </div>
 
         {/* Pie Chart Container */}
@@ -133,8 +140,13 @@ export default function VisitorChart({ chartData, breakdownData }) {
           <p className="text-xs font-semibold text-gray-500 dark:text-slate-400 mb-4 uppercase tracking-wider text-center">
             Check-In Types Share
           </p>
-          <div className="h-44 relative flex items-center justify-center">
-            <ResponsiveContainer width="100%" height="100%">
+          <div className="h-44 min-h-44 min-w-0 relative flex items-center justify-center">
+            <ResponsiveContainer
+              width="100%"
+              height="100%"
+              minWidth={0}
+              initialDimension={{ width: 280, height: 176 }}
+            >
               <PieChart>
                 <Pie
                   data={pieData}

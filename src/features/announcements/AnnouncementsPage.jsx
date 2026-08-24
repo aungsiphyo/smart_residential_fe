@@ -1,12 +1,13 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Button from "../../components/ui/Button";
 import { fetchAnnouncements, createAnnouncement } from "./api";
 import AnnouncementList from "./components/AnnouncementList";
 import AnnouncementForm from "./components/AnnouncementForm";
 import useAuthStore from "../auth/authStore";
-import { io } from "socket.io-client";
-
-const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || "http://localhost:5001";
+import {
+  createAuthenticatedSocket,
+  disconnectAuthenticatedSocket,
+} from "../../services/socket";
 
 export default function AnnouncementsPage() {
   const [items, setItems] = useState([]);
@@ -38,19 +39,33 @@ export default function AnnouncementsPage() {
     }
   };
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    // Initial remote data hydration is intentionally performed on mount.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    load();
+  }, []);
 
   useEffect(() => {
-    socketRef.current = io(SOCKET_URL);
+    socketRef.current = createAuthenticatedSocket();
     const socket = socketRef.current;
-    socket.on("announcement", (a) => {
-      // prepend new announcements
-      setItems((prev) => [a, ...prev]);
-    });
+    const handleAnnouncement = (announcement) => {
+      setItems((prev) => {
+        const announcementId = announcement?._id || announcement?.id;
+        if (
+          announcementId &&
+          prev.some((item) => (item._id || item.id) === announcementId)
+        ) {
+          return prev;
+        }
+        return [announcement, ...prev];
+      });
+    };
+
+    socket.on("announcement", handleAnnouncement);
 
     return () => {
-      socket.off("announcement");
-      socket.disconnect();
+      socket.off("announcement", handleAnnouncement);
+      disconnectAuthenticatedSocket(socket);
       socketRef.current = null;
     };
   }, []);
